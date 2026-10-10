@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>稲荷クラフト｜サバイバル×経済×会社×自治体 Minecraftサーバー</title>
+  <meta name="description" content="稲荷クラフトは Java版・統合版に対応したサバイバル経済サーバーです。市場相場・会社ランキング・自治体情報をゲーム外からも確認できます。">
+  <meta name="theme-color" content="#0f2a1d">
+  <meta property="og:title" content="稲荷クラフト">
+  <meta property="og:description" content="サバイバル×経済×会社×自治体。Java版・統合版対応のMinecraftサーバー。">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/home.js" defer></script>
+</head>
+<body data-page="home">
+  <header id="site-header" class="site-header"></header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div>
+          <div class="edition-tags">
+            <span class="edition-tag">Java版 対応</span>
+            <span class="edition-tag">統合版 対応</span>
+          </div>
+          <h1><small>MINECRAFT SURVIVAL ECONOMY SERVER</small>稲荷クラフト</h1>
+          <p class="hero-lead" id="hero-tagline">実りを育て、市場を動かし、街をつくる。</p>
+          <p class="hero-lead">サバイバルで集めた資源を市場で売買し、仲間と会社を興し、自治体で暮らす。プレイヤーの活動がそのまま経済になるサーバーです。</p>
+          <div class="hero-actions">
+            <a class="btn btn-gold" href="join.html">参加方法を見る</a>
+            <a class="btn btn-outline" id="hero-discord" href="#" target="_blank" rel="noopener">Discordに参加</a>
+          </div>
+        </div>
+
+        <aside class="status-panel" aria-labelledby="status-title">
+          <h2 id="status-title">SERVER STATUS</h2>
+          <div class="status-row"><span class="label">状態</span><span class="value" id="st-online"><span class="status-dot"></span>確認中…</span></div>
+          <div class="status-row"><span class="label">オンライン人数</span><span class="value" id="st-players">—</span></div>
+          <div class="status-row"><span class="label">Java版</span><span class="value" id="st-java">準備中</span></div>
+          <div class="status-row"><span class="label">統合版</span><span class="value" id="st-bedrock">準備中</span></div>
+          <div class="status-row"><span class="label">対応バージョン</span><span class="value" id="st-version">準備中</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>稲荷クラフトの特徴</h2>
+            <p class="section-lead">4つの要素が重なり合い、ひとつの経済圏をつくります。</p>
+          </div>
+        </div>
+        <div class="grid grid-4">
+          <article class="card feature reveal">
+            <div class="feature-kanji" aria-hidden="true">生</div>
+            <h3>サバイバル</h3>
+            <p>バニラに近い感覚で、採掘・農業・漁業・建築を楽しめます。集めた資源はすべて経済活動の元手になります。</p>
+          </article>
+          <article class="card feature reveal">
+            <div class="feature-kanji" aria-hidden="true">商</div>
+            <h3>経済</h3>
+            <p>公式ショップの価格は需要と供給で変動。特需を見極めて売買し、資産を増やしましょう。</p>
+          </article>
+          <article class="card feature reveal">
+            <div class="feature-kanji" aria-hidden="true">社</div>
+            <h3>会社</h3>
+            <p>仲間と会社を設立し、売上を伸ばしてランクアップ。上場すれば株価がつき、投資の対象にもなります。</p>
+          </article>
+          <article class="card feature reveal">
+            <div class="feature-kanji" aria-hidden="true">町</div>
+            <h3>自治体</h3>
+            <p>村・町・市をつくり、住民とともに街を発展させます。まちづくりの方針は自治体ごとに自由です。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>ゲーム外で情報をチェック</h2>
+            <p class="section-lead">相場や会社の動きを、ログインしていなくても確認できます。</p>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          <a class="card link-card reveal" href="market.html">
+            <div class="card-body">
+              <svg class="link-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/></svg>
+              <h3>市場相場</h3>
+              <p>公式ショップの購入・売却価格、変動率、価格推移グラフ、特需情報を確認できます。</p>
+              <span class="more">相場を見る</span>
+            </div>
+          </a>
+          <a class="card link-card reveal" href="companies.html">
+            <div class="card-body">
+              <svg class="link-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V8l6-4v17"/><path d="M10 21V10l10 3v8"/><path d="M2 21h20"/><path d="M14 15h2M14 18h2"/></svg>
+              <h3>会社ランキング</h3>
+              <p>累計売上・社員数・株価で会社を比較。各社の詳細ページも用意しています。</p>
+              <span class="more">ランキングを見る</span>
+            </div>
+          </a>
+          <a class="card link-card reveal" href="municipalities.html">
+            <div class="card-body">
+              <svg class="link-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18"/><path d="M5 10V7h14v3"/><path d="M2 7h20"/><path d="M7 10v11M17 10v11"/><path d="M4 21h16"/></svg>
+              <h3>自治体一覧</h3>
+              <p>サーバー内の村・町・市の一覧です。人口や首長、自治体の紹介を掲載しています。</p>
+              <span class="more">自治体を見る</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="news-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="news-title">お知らせ</h2>
+        </div>
+        <div class="card" id="news"><p class="loading">読み込み中…</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="cta-band reveal">
+          <div>
+            <h2>さあ、稲荷クラフトへ。</h2>
+            <p>参加方法とルールを確認して、さっそく始めましょう。</p>
+          </div>
+          <div class="hero-actions" style="margin:0">
+            <a class="btn btn-gold" href="join.html">参加方法</a>
+            <a class="btn btn-outline" id="cta-discord" href="#" target="_blank" rel="noopener">Discord</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+  <noscript><p style="text-align:center;padding:16px">このサイトを正しく表示するには JavaScript を有効にしてください。</p></noscript>
+</body>
+</html>

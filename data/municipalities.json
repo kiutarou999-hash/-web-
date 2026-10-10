@@ -1,0 +1,39 @@
+{
+  "sample": true,
+  "updatedAt": "2026-10-10T12:00:00+09:00",
+  "municipalities": [
+    {
+      "id": "sample-city",
+      "name": "サンプル市",
+      "type": "市",
+      "worldGroup": "メインワールド",
+      "mayor": "Player_D",
+      "population": 18,
+      "foundedAt": "2026-04-29",
+      "description": "サーバー中央に位置する商業都市です（サンプル）。",
+      "discordUrl": ""
+    },
+    {
+      "id": "sample-town",
+      "name": "サンプル町",
+      "type": "町",
+      "worldGroup": "メインワールド",
+      "mayor": "Player_A",
+      "population": 9,
+      "foundedAt": "2026-05-15",
+      "description": "田園の広がる農業の町です（サンプル）。",
+      "discordUrl": ""
+    },
+    {
+      "id": "sample-village",
+      "name": "サンプル村",
+      "type": "村",
+      "worldGroup": "メインワールド",
+      "mayor": "Player_F",
+      "population": 4,
+      "foundedAt": "2026-08-01",
+      "description": "海沿いの小さな漁村です（サンプル）。",
+      "discordUrl": ""
+    }
+  ]
+}

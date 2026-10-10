@@ -1,0 +1,184 @@
+{
+  "sample": true,
+  "updatedAt": "2026-10-10T12:00:00+09:00",
+  "worldGroups": [
+    {
+      "id": "main",
+      "name": "メインワールド"
+    },
+    {
+      "id": "resource",
+      "name": "資源ワールド"
+    }
+  ],
+  "items": [
+    {
+      "id": "wheat",
+      "name": "小麦",
+      "kana": "こむぎ",
+      "category": "農作物",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 12,
+          "sell": 4
+        },
+        "resource": {
+          "buy": 14,
+          "sell": 5
+        }
+      }
+    },
+    {
+      "id": "carrot",
+      "name": "ニンジン",
+      "kana": "にんじん",
+      "category": "農作物",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 10,
+          "sell": 3
+        },
+        "resource": {
+          "buy": 11,
+          "sell": 3
+        }
+      }
+    },
+    {
+      "id": "potato",
+      "name": "ジャガイモ",
+      "kana": "じゃがいも",
+      "category": "農作物",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 10,
+          "sell": 3
+        }
+      }
+    },
+    {
+      "id": "rice",
+      "name": "米",
+      "kana": "こめ",
+      "category": "農作物",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 18,
+          "sell": 7
+        }
+      }
+    },
+    {
+      "id": "oak_log",
+      "name": "オークの原木",
+      "kana": "おーくのげんぼく",
+      "category": "木材",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 20,
+          "sell": 6
+        },
+        "resource": {
+          "buy": 16,
+          "sell": 6
+        }
+      }
+    },
+    {
+      "id": "cobblestone",
+      "name": "丸石",
+      "kana": "まるいし",
+      "category": "鉱石・石材",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 2,
+          "sell": 0.5
+        },
+        "resource": {
+          "buy": 2,
+          "sell": 0.5
+        }
+      }
+    },
+    {
+      "id": "iron_ingot",
+      "name": "鉄インゴット",
+      "kana": "てついんごっと",
+      "category": "鉱石・石材",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 120,
+          "sell": 45
+        },
+        "resource": {
+          "buy": 110,
+          "sell": 45
+        }
+      }
+    },
+    {
+      "id": "gold_ingot",
+      "name": "金インゴット",
+      "kana": "きんいんごっと",
+      "category": "鉱石・石材",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 300,
+          "sell": 110
+        },
+        "resource": {
+          "buy": 290,
+          "sell": 110
+        }
+      }
+    },
+    {
+      "id": "diamond",
+      "name": "ダイヤモンド",
+      "kana": "だいやもんど",
+      "category": "鉱石・石材",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 2400,
+          "sell": 900
+        },
+        "resource": {
+          "buy": 2300,
+          "sell": 900
+        }
+      }
+    },
+    {
+      "id": "cod",
+      "name": "生鱈",
+      "kana": "なまだら",
+      "category": "水産物",
+      "image": "",
+      "prices": {
+        "main": {
+          "buy": 25,
+          "sell": 8
+        }
+      }
+    }
+  ],
+  "specialDemands": [
+    {
+      "worldGroup": "main",
+      "itemId": "rice",
+      "multiplier": 1.5,
+      "start": "2026-10-10T00:00:00+09:00",
+      "end": "2026-10-17T23:59:00+09:00",
+      "note": "秋の収穫祭にともなう特需（サンプル）"
+    }
+  ]
+}

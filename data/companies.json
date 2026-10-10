@@ -1,0 +1,63 @@
+{
+  "sample": true,
+  "updatedAt": "2026-10-10T12:00:00+09:00",
+  "companies": [
+    {
+      "id": "sample-shoji",
+      "name": "サンプル商事",
+      "rank": "A",
+      "totalSales": 1250000,
+      "employees": 12,
+      "listed": true,
+      "stockPrice": 1520,
+      "president": "Player_A",
+      "foundedAt": "2026-05-01",
+      "industry": "商社",
+      "headquarters": "サンプル町",
+      "description": "農作物と鉱石の流通を手がける総合商社です（サンプル）。",
+      "members": [
+        { "name": "Player_A", "role": "社長" },
+        { "name": "Player_B", "role": "副社長" },
+        { "name": "Player_C", "role": "社員" }
+      ],
+      "stockHistory": []
+    },
+    {
+      "id": "sample-kensetsu",
+      "name": "サンプル建設",
+      "rank": "B",
+      "totalSales": 830000,
+      "employees": 8,
+      "listed": true,
+      "stockPrice": 980,
+      "president": "Player_D",
+      "foundedAt": "2026-06-12",
+      "industry": "建設",
+      "headquarters": "サンプル市",
+      "description": "建築依頼と土地整備を請け負う建設会社です（サンプル）。",
+      "members": [
+        { "name": "Player_D", "role": "社長" },
+        { "name": "Player_E", "role": "社員" }
+      ],
+      "stockHistory": []
+    },
+    {
+      "id": "sample-suisan",
+      "name": "サンプル水産",
+      "rank": "C",
+      "totalSales": 210000,
+      "employees": 3,
+      "listed": false,
+      "stockPrice": null,
+      "president": "Player_F",
+      "foundedAt": "2026-08-20",
+      "industry": "水産",
+      "headquarters": "サンプル村",
+      "description": "漁業と海産物の販売を行っています（サンプル）。",
+      "members": [
+        { "name": "Player_F", "role": "社長" }
+      ],
+      "stockHistory": []
+    }
+  ]
+}

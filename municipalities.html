@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自治体一覧｜稲荷クラフト</title>
+  <meta name="description" content="稲荷クラフトの自治体（村・町・市）一覧。">
+  <meta name="theme-color" content="#0f2a1d">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/municipalities.js" defer></script>
+</head>
+<body data-page="municipalities">
+  <header id="site-header" class="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">MUNICIPALITIES</span>
+        <h1>自治体一覧</h1>
+        <p>稲荷クラフトに存在する村・町・市の一覧です。</p>
+      </div>
+    </section>
+
+    <div class="container" style="padding-top:32px">
+      <div id="muni-notice"></div>
+      <div class="toolbar">
+        <div class="grow search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <label for="q" class="visually-hidden">自治体名で検索</label>
+          <input class="input" id="q" type="search" placeholder="自治体名・首長名で検索" autocomplete="off">
+        </div>
+        <div>
+          <label for="sort" class="visually-hidden">並び替え</label>
+          <select class="select" id="sort">
+            <option value="population">人口が多い順</option>
+            <option value="founded">設立が古い順</option>
+            <option value="name">名前順</option>
+          </select>
+        </div>
+      </div>
+      <p class="meta-line" id="muni-meta"></p>
+      <div id="muni-list"><p class="loading">読み込み中…</p></div>
+    </div>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+  <noscript><p style="text-align:center;padding:16px">このサイトを正しく表示するには JavaScript を有効にしてください。</p></noscript>
+</body>
+</html>

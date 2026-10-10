@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>市場相場｜稲荷クラフト</title>
+  <meta name="description" content="稲荷クラフト公式ショップの購入価格・売却価格・変動率・価格推移・特需情報。">
+  <meta name="theme-color" content="#0f2a1d">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/chart.js" defer></script>
+  <script src="assets/js/market.js" defer></script>
+</head>
+<body data-page="market">
+  <header id="site-header" class="site-header"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">MARKET</span>
+        <h1>市場相場</h1>
+        <p>公式ショップ（MoroMenuShop）の現在価格と価格推移です。価格はゲーム内の公式ショップと同じ値を表示します。</p>
+      </div>
+    </section>
+
+    <div class="container" style="padding-top:32px">
+      <div id="market-notice"></div>
+
+      <div class="toolbar">
+        <div>
+          <div class="segmented" id="wg-tabs" role="tablist" aria-label="ワールドグループ"></div>
+        </div>
+      </div>
+
+      <section aria-labelledby="demand-title" id="demand-section" hidden>
+        <div class="section-head" style="margin-bottom:14px"><h2 id="demand-title">特需情報</h2></div>
+        <div class="demand-grid" id="demands"></div>
+      </section>
+
+      <div class="section-head" style="margin-bottom:14px"><h2>価格一覧</h2></div>
+      <div class="toolbar">
+        <div class="grow search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <label for="q" class="visually-hidden">アイテム検索</label>
+          <input class="input" id="q" type="search" placeholder="アイテム名で検索（例：小麦）" autocomplete="off">
+        </div>
+        <div>
+          <label for="cat" class="visually-hidden">カテゴリ</label>
+          <select class="select" id="cat"><option value="">すべてのカテゴリ</option></select>
+        </div>
+        <div>
+          <label for="sort" class="visually-hidden">並び替え</label>
+          <select class="select" id="sort">
+            <option value="default">標準の並び</option>
+            <option value="buy-desc">購入価格が高い順</option>
+            <option value="buy-asc">購入価格が安い順</option>
+            <option value="sell-desc">売却価格が高い順</option>
+            <option value="sell-asc">売却価格が安い順</option>
+            <option value="change-desc">値上がり順</option>
+            <option value="change-asc">値下がり順</option>
+            <option value="name">名前順</option>
+          </select>
+        </div>
+      </div>
+      <p class="meta-line" id="market-meta"></p>
+      <div id="market-list"><p class="loading">読み込み中…</p></div>
+    </div>
+  </main>
+
+  <dialog class="panel" id="item-dialog" aria-labelledby="item-dialog-title">
+    <div class="panel-head">
+      <span class="item-icon" id="dlg-icon"></span>
+      <h2 id="item-dialog-title"></h2>
+      <button class="panel-close" type="button" data-close aria-label="閉じる">×</button>
+    </div>
+    <div class="panel-body">
+      <div class="stat-row" id="dlg-stats"></div>
+      <div class="chart-box">
+        <div class="chart-head">
+          <h3>価格推移</h3>
+          <div class="segmented" id="range-tabs" role="group" aria-label="期間">
+            <button type="button" data-range="24h" aria-pressed="true">24時間</button>
+            <button type="button" data-range="7d" aria-pressed="false">7日間</button>
+            <button type="button" data-range="30d" aria-pressed="false">30日間</button>
+          </div>
+        </div>
+        <div id="dlg-chart"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <footer id="site-footer" class="site-footer"></footer>
+  <noscript><p style="text-align:center;padding:16px">このサイトを正しく表示するには JavaScript を有効にしてください。</p></noscript>
+</body>
+</html>
