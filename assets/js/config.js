@@ -15,27 +15,31 @@ window.SITE_CONFIG = {
 
   // ---- 接続情報 ----
   // Java版のサーバーアドレス（例: "play.inari-craft.jp"）
-  javaAddress: "",
+  javaAddress: "106.73.10.99",
   // Java版のポート（通常は 25565。25565 の場合は表示されません）
-  javaPort: 25565,
+  javaPort: 4466,
 
   // 統合版（Bedrock）のサーバーアドレス（Java版と同じなら同じ値を入れてください）
-  bedrockAddress: "",
+  bedrockAddress: "106.73.10.99",
   // 統合版のポート（通常は 19132）
-  bedrockPort: 19132,
+  bedrockPort: 4466,
+
+  // 統合版で Xbox フレンド機能から参加する場合のフレンド名（ゲーマータグ）
+  bedrockFriendName: "InariPlay",
 
   // 対応バージョン（例: "1.21.x"）
-  supportedVersions: "",
+  supportedVersions: "26.2",
 
   // ゲーム内通貨の単位（例: "円"）
   currencyUnit: "円",
 
   // ---- リンク ----
   // Discord の招待URL（例: "https://discord.gg/xxxxxxx"）
-  discordUrl: "",
+  discordUrl: "https://discord.gg/yrKgNeEyeR",
 
   // ---- オンライン人数表示 ----
   // javaAddress が設定されている場合、外部API (mcsrvstat.us) で現在の人数を取得します。
+  // 問い合わせ先は「javaAddress:javaPort」（例: 106.73.10.99:4466）です。
   // 表示したくない場合は false にしてください。
   showOnlineStatus: true,
   onlineStatusApi: "https://api.mcsrvstat.us/3/",

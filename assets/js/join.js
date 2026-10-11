@@ -4,19 +4,26 @@
   var U = window.Inari;
   var CFG = window.SITE_CONFIG || {};
 
-  function addrBox(id, label, text) {
+  function addrBox(id, text) {
     var el = document.getElementById(id);
-    if (!text) { el.textContent = label + "準備中"; return; }
-    el.innerHTML = U.esc(label + text) + '<button class="copy-btn" type="button" data-copy="' + U.esc(text) + '">コピー</button>';
+    if (!el) return;
+    if (!text) { el.textContent = "準備中"; return; }
+    el.innerHTML = '<span class="addr-text">' + U.esc(text) + '</span><button class="copy-btn" type="button" data-copy="' + U.esc(text) + '">コピー</button>';
+  }
+
+  function fill(selector, text) {
+    document.querySelectorAll(selector).forEach(function (e) { e.textContent = text; });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".js-version").forEach(function (e) {
-      e.textContent = CFG.supportedVersions || "準備中";
-    });
-    addrBox("java-addr", "", U.javaAddress());
-    addrBox("bedrock-addr", "", CFG.bedrockAddress);
-    addrBox("bedrock-port", "ポート：", String(CFG.bedrockPort || 19132));
+    fill(".js-version", CFG.supportedVersions || "準備中");
+    fill(".js-server-name", CFG.serverName || "稲荷クラフト");
+    fill(".js-friend", CFG.bedrockFriendName || "準備中");
+    addrBox("java-addr", U.javaAddress());
+    addrBox("java-addr-step", U.javaAddress());
+    addrBox("friend-name", CFG.bedrockFriendName);
+    addrBox("bedrock-addr", CFG.bedrockAddress);
+    addrBox("bedrock-port", String(CFG.bedrockPort || 19132));
     U.applyDiscord(document.getElementById("join-discord"));
     document.addEventListener("click", function (e) {
       var b = e.target.closest("[data-copy]");

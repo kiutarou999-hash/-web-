@@ -6,7 +6,11 @@
   <title>参加方法｜稲荷クラフト</title>
   <meta name="description" content="稲荷クラフトへの参加方法。Java版・統合版それぞれの接続手順を案内します。">
   <meta name="theme-color" content="#0f2a1d">
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/img/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="assets/img/favicon-16.png" type="image/png" sizes="16x16">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/config.js" defer></script>
   <script src="assets/js/common.js" defer></script>
@@ -18,52 +22,78 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <span class="eyebrow">HOW TO JOIN</span>
+        <span class="eyebrow">参加案内</span>
         <h1>参加方法</h1>
-        <p>Java版・統合版のどちらからでも参加できます。</p>
+        <p>Java版・統合版のどちらからでも参加できます。お使いの環境に合わせて手順をご覧ください。</p>
+        <div class="hero-actions" style="margin-top:20px">
+          <a class="btn btn-gold btn-sm" href="#java">Java版の参加方法</a>
+          <a class="btn btn-outline btn-sm" href="#bedrock">統合版の参加方法</a>
+        </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="java">
       <div class="container">
-        <div class="section-head"><h2>Java版（PC）</h2></div>
+        <div class="section-head">
+          <div>
+            <h2>Java版（PC）</h2>
+            <p class="section-lead">対応バージョン：<strong class="js-version">準備中</strong></p>
+          </div>
+        </div>
+        <div class="card card-body conn-summary">
+          <dl class="dl-grid">
+            <dt>サーバー名</dt><dd class="js-server-name">稲荷クラフト</dd>
+            <dt>サーバーアドレス</dt><dd><span class="addr-box" id="java-addr">準備中</span></dd>
+          </dl>
+        </div>
         <ol class="steps">
+          <li class="card"><h3>Minecraft Java版を起動する</h3><p>Minecraft Launcher を開きます。</p></li>
+          <li class="card"><h3>バージョン<span class="js-version">準備中</span>を選択する</h3><p>ランチャーの「起動構成」でバージョン <strong class="js-version">準備中</strong> を選んで「プレイ」を押します。</p></li>
+          <li class="card"><h3>「マルチプレイ」を開く</h3><p>タイトル画面から「マルチプレイ」を選びます。</p></li>
+          <li class="card"><h3>「サーバーを追加」を押す</h3><p>画面下部の「サーバーを追加」を押します。</p></li>
           <li class="card">
-            <h3>Minecraft Java Edition を起動</h3>
-            <p>対応バージョン：<strong class="js-version">準備中</strong></p>
+            <h3>サーバー名とサーバーアドレスを入力する</h3>
+            <p>サーバー名に「<span class="js-server-name">稲荷クラフト</span>」、サーバーアドレスに下記を入力して「完了」を押します。<br>※サーバー名は任意の名前でも構いません。</p>
+            <div class="addr-box" id="java-addr-step">準備中</div>
           </li>
-          <li class="card">
-            <h3>「マルチプレイ」→「サーバーを追加」</h3>
-            <p>サーバー名は自由に入力してください（例：稲荷クラフト）。</p>
-          </li>
-          <li class="card">
-            <h3>サーバーアドレスを入力して接続</h3>
-            <p>以下のアドレスを入力し、「完了」→ サーバーを選んで「サーバーに接続」。</p>
-            <div class="addr-box" id="java-addr">準備中</div>
-          </li>
+          <li class="card"><h3>サーバーに接続する</h3><p>一覧に追加された<span class="js-server-name">稲荷クラフト</span>を選び、「サーバーに接続」を押します。</p></li>
         </ol>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="bedrock">
       <div class="container">
-        <div class="section-head"><h2>統合版（スマホ・Switch・Windows・PS・Xbox）</h2></div>
+        <div class="section-head">
+          <div>
+            <h2>統合版（スマホ・Switch・PlayStation・Xbox・Windows）</h2>
+            <p class="section-lead">統合版は、Xboxのフレンド機能を使って参加する方法が基本です。</p>
+          </div>
+        </div>
+
+        <h3 class="method-title"><span class="badge">基本</span>方法A：Xboxフレンド機能で参加する</h3>
         <ol class="steps">
+          <li class="card"><h3>Minecraft統合版を起動する</h3><p>お使いの端末でMinecraftを起動します。</p></li>
+          <li class="card"><h3>Microsoftアカウントにサインインする</h3><p>フレンド機能を使うには、Microsoftアカウントへのサインインが必要です。</p></li>
           <li class="card">
-            <h3>Minecraft を起動し「遊ぶ」→「サーバー」タブ</h3>
-            <p>画面下部の「サーバーを追加」を選びます。</p>
+            <h3>フレンド検索で「<span class="js-friend">InariPlay</span>」を検索する</h3>
+            <p>「遊ぶ」→「フレンド」タブ →「フレンドを追加」から、下記の名前で検索します。</p>
+            <div class="addr-box" id="friend-name">準備中</div>
           </li>
-          <li class="card">
-            <h3>アドレスとポートを入力</h3>
-            <p>サーバー名は自由です。以下のアドレス・ポートを入力して保存し、接続してください。</p>
-            <div class="addr-box" id="bedrock-addr">準備中</div>
-            <div class="addr-box" id="bedrock-port">ポート：19132</div>
-          </li>
-          <li class="card">
-            <h3>家庭用ゲーム機の場合</h3>
-            <p>Switch・PlayStation・Xbox では外部サーバーを直接追加できない場合があります。詳しい接続方法は Discord でご案内しています。</p>
-          </li>
+          <li class="card"><h3><span class="js-friend">InariPlay</span>へフレンド申請を送る</h3><p>検索結果から<span class="js-friend">InariPlay</span>を選び、フレンド申請を送ります。</p></li>
+          <li class="card"><h3>フレンド一覧から<span class="js-friend">InariPlay</span>のサーバーに参加する</h3><p>「フレンド」タブに表示される<span class="js-friend">InariPlay</span>のサーバーを選んで参加します。</p></li>
         </ol>
+
+        <h3 class="method-title" style="margin-top:40px"><span class="badge badge-gray">代替</span>方法B：サーバーアドレスで直接接続する</h3>
+        <div class="card card-body">
+          <p style="color:var(--ink-soft)">方法Aで接続できない場合の代替方法です。スマートフォン（iOS・Android）やWindowsなど、外部サーバーを追加できる環境で利用できます。<br>
+            Switch・PlayStation・Xboxなどの家庭用ゲーム機では外部サーバーを直接追加できない場合があるため、方法Aをご利用ください。</p>
+          <p style="margin-bottom:6px">「遊ぶ」→「サーバー」タブ →「サーバーを追加」を選び、以下を入力して保存・接続します。</p>
+          <dl class="dl-grid" style="align-items:center">
+            <dt>サーバー名</dt><dd>任意（例：<span class="js-server-name">稲荷クラフト</span>）</dd>
+            <dt>サーバーアドレス</dt><dd><span class="addr-box" id="bedrock-addr">準備中</span></dd>
+            <dt>ポート</dt><dd><span class="addr-box" id="bedrock-port">準備中</span></dd>
+          </dl>
+        </div>
       </div>
     </section>
 
@@ -82,7 +112,7 @@
           <div class="card card-body">
             <h2 style="font-size:1.25rem">Discord に参加しよう</h2>
             <p style="color:var(--ink-soft)">お知らせ、ルールの詳細、質問・サポート、会社や自治体のメンバー募集は Discord で行っています。</p>
-            <a class="btn btn-green" id="join-discord" href="#" target="_blank" rel="noopener">Discordに参加</a>
+            <a class="btn btn-green" id="join-discord" href="#" target="_blank" rel="noopener">Discordに参加する</a>
           </div>
         </div>
       </div>

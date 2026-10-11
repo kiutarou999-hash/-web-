@@ -14,19 +14,9 @@
     { href: "municipalities.html", label: "自治体一覧", key: "municipalities" }
   ];
 
-  var BRAND_SVG =
-    '<svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">' +
-    '<rect x="1.5" y="1.5" width="37" height="37" rx="7" fill="#1e4d36" stroke="#d4a43c" stroke-width="2"/>' +
-    '<path d="M20 33V12" stroke="#e3bd62" stroke-width="2" stroke-linecap="round"/>' +
-    '<g fill="#e3bd62">' +
-    '<ellipse cx="16.5" cy="14" rx="2.2" ry="3.4" transform="rotate(-30 16.5 14)"/>' +
-    '<ellipse cx="23.5" cy="14" rx="2.2" ry="3.4" transform="rotate(30 23.5 14)"/>' +
-    '<ellipse cx="16" cy="20" rx="2.2" ry="3.4" transform="rotate(-35 16 20)"/>' +
-    '<ellipse cx="24" cy="20" rx="2.2" ry="3.4" transform="rotate(35 24 20)"/>' +
-    '<ellipse cx="16.5" cy="26" rx="2.2" ry="3.4" transform="rotate(-40 16.5 26)"/>' +
-    '<ellipse cx="23.5" cy="26" rx="2.2" ry="3.4" transform="rotate(40 23.5 26)"/>' +
-    '<ellipse cx="20" cy="8.5" rx="2" ry="3.2"/>' +
-    "</g></svg>";
+  // 公式アイコン（assets/img/icon-128.png）
+  var BRAND_IMG = '<img class="brand-mark" src="assets/img/icon-128.png" width="44" height="44" alt="">';
+  var DISCORD_LABEL = "Discordに参加する";
 
   var U = {};
 
@@ -120,16 +110,31 @@
   };
 
   U.copy = function (text, btn) {
-    var done = function () {
+    var show = function (msg) {
       if (!btn) return;
-      var old = btn.textContent;
-      btn.textContent = "コピーしました";
-      setTimeout(function () { btn.textContent = old; }, 1600);
+      if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+      btn.textContent = msg;
+      clearTimeout(btn._t);
+      btn._t = setTimeout(function () { btn.textContent = btn.dataset.label; }, 1600);
+    };
+    var legacy = function () {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      if (ok) show("コピーしました");
+      else window.prompt("以下をコピーしてください", text);
     };
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(done, function () { window.prompt("コピーしてください", text); });
+      navigator.clipboard.writeText(text).then(function () { show("コピーしました"); }, legacy);
     } else {
-      window.prompt("コピーしてください", text);
+      legacy();
     }
   };
 
@@ -161,6 +166,7 @@
     } else {
       el.removeAttribute("href");
       el.setAttribute("aria-disabled", "true");
+      el.removeAttribute("target");
       el.textContent = "Discord（準備中）";
     }
   };
@@ -175,14 +181,21 @@
         '<li><a href="' + n.href + '"' + (n.key === current ? ' aria-current="page"' : "") + ">" + n.label + "</a></li>"
       );
     }).join("");
+    var discord = CFG.discordUrl
+      ? '<a class="btn btn-gold btn-sm header-discord" href="' + U.esc(CFG.discordUrl) + '" target="_blank" rel="noopener">' + DISCORD_LABEL + "</a>"
+      : "";
+    if (CFG.discordUrl) {
+      links += '<li class="nav-discord"><a href="' + U.esc(CFG.discordUrl) + '" target="_blank" rel="noopener">' + DISCORD_LABEL + "</a></li>";
+    }
     el.className = "site-header";
     el.innerHTML =
       '<div class="container">' +
-      '<a class="brand" href="index.html">' + BRAND_SVG +
+      '<a class="brand" href="index.html">' + BRAND_IMG +
       '<span class="brand-name">' + U.esc(CFG.serverName || "稲荷クラフト") + "</span></a>" +
       '<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="global-nav">' +
       '<span aria-hidden="true">☰</span>メニュー</button>' +
       '<nav class="global-nav" id="global-nav" aria-label="メインメニュー"><ul>' + links + "</ul></nav>" +
+      discord +
       "</div>";
     var btn = el.querySelector(".nav-toggle");
     var nav = el.querySelector(".global-nav");
@@ -198,16 +211,16 @@
     var links = NAV.map(function (n) {
       return '<li><a href="' + n.href + '">' + n.label + "</a></li>";
     }).join("");
-    if (CFG.discordUrl) {
-      links += '<li><a href="' + U.esc(CFG.discordUrl) + '" target="_blank" rel="noopener">Discord</a></li>';
-    }
+    var discord = CFG.discordUrl
+      ? '<p style="margin:16px 0 0"><a class="btn btn-gold btn-sm" href="' + U.esc(CFG.discordUrl) + '" target="_blank" rel="noopener">' + DISCORD_LABEL + "</a></p>"
+      : "";
     el.className = "site-footer";
     el.innerHTML =
       '<div class="container">' +
       '<div class="footer-grid">' +
-      '<div><a class="brand" href="index.html">' + BRAND_SVG +
+      '<div><a class="brand" href="index.html">' + BRAND_IMG +
       '<span class="brand-name">' + U.esc(CFG.serverName || "稲荷クラフト") + "</span></a>" +
-      '<p style="margin:10px 0 0">サバイバル × 経済 × 会社 × 自治体</p></div>' +
+      '<p style="margin:10px 0 0">サバイバル × 経済 × 会社 × 自治体</p>' + discord + "</div>" +
       '<ul class="footer-links">' + links + "</ul>" +
       "</div>" +
       '<p class="footer-note">© ' + new Date().getFullYear() + " " + U.esc(CFG.serverName || "稲荷クラフト") +

@@ -8,7 +8,7 @@ HTML / CSS / JavaScript だけで作られており、ビルド作業なしで G
 | ファイル | 内容 |
 | --- | --- |
 | `index.html` | トップページ（紹介・特徴・サーバー状態・お知らせ・各ページへの導線） |
-| `join.html` | 参加方法（Java版・統合版） |
+| `join.html` | 参加方法（Java版／統合版：Xboxフレンド参加・直接接続） |
 | `market.html` | 市場相場（価格一覧・検索・並び替え・ワールドグループ切替・特需・価格推移グラフ） |
 | `companies.html` | 会社ランキング（検索・項目別並び替え・上場状況での絞り込み） |
 | `company.html?id=会社ID` | 会社詳細（順位・売上・社員・株価推移・会社概要） |
@@ -27,18 +27,31 @@ HTML / CSS / JavaScript だけで作られており、ビルド作業なしで G
 
 ## 2. サーバーアドレス・Discord URL を設定する
 
-`assets/js/config.js` を開いて、`""` の中に値を入れて保存するだけです。
+`assets/js/config.js` で管理しています。現在の設定値：
 
 ```js
-javaAddress: "play.example.jp",      // Java版アドレス
-bedrockAddress: "play.example.jp",   // 統合版アドレス
-bedrockPort: 19132,                  // 統合版ポート
-supportedVersions: "1.21.x",         // 対応バージョン
-discordUrl: "https://discord.gg/xxxx",
+javaAddress: "106.73.10.99",        // Java版アドレス
+javaPort: 4466,                     // Java版ポート（表示は 106.73.10.99:4466）
+bedrockAddress: "106.73.10.99",     // 統合版 直接接続アドレス
+bedrockPort: 4466,                  // 統合版 直接接続ポート
+bedrockFriendName: "InariPlay",     // 統合版 Xboxフレンド参加用の名前
+supportedVersions: "26.2",          // 対応バージョン
+discordUrl: "https://discord.gg/yrKgNeEyeR",
 ```
 
-- 空欄のままの項目はサイト上で「準備中」と表示されます。
-- `javaAddress` を設定すると、トップページに**現在のオンライン人数**が自動で表示されます（外部サービス mcsrvstat.us を使用。止めたい場合は `showOnlineStatus: false`）。
+- 値を変えて保存するだけで、トップ・参加方法・ヘッダー・フッターすべてに反映されます。空欄にした項目は「準備中」と表示されます。
+- トップページの**オンライン人数**は、`javaAddress:javaPort`（106.73.10.99:4466）を外部サービス mcsrvstat.us に問い合わせて表示しています（止めたい場合は `showOnlineStatus: false`）。
+
+### 公式アイコン
+
+`assets/img/` に、公式アイコン（64×64 ドットの画像）を整数倍で拡大縮小したファイルを置いています（縦横比を維持し、にじみなし）。
+
+| ファイル | 用途 |
+| --- | --- |
+| `icon-128.png` | ヘッダー・フッターのロゴ |
+| `icon-512.png` | トップページのメインビジュアル、OGP画像、スマホ用 |
+| `icon-192.png` / `apple-touch-icon.png` | スマートフォンのホーム画面アイコン（`site.webmanifest`） |
+| `favicon.ico` / `favicon-32.png` / `favicon-16.png` | ブラウザタブのアイコン（中央の金色のキャラクター部分を正方形に切り抜き） |
 
 ## 3. お知らせを追加する
 

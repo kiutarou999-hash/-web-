@@ -17,8 +17,9 @@
   function renderStatic() {
     if (CFG.tagline) document.getElementById("hero-tagline").textContent = CFG.tagline;
     setText("st-java", addrHtml(U.javaAddress()));
+    setText("st-friend", addrHtml(CFG.bedrockFriendName));
     setText("st-bedrock", CFG.bedrockAddress
-      ? addrHtml(CFG.bedrockAddress) + '<br><small style="font-weight:400;opacity:.75">ポート ' + U.esc(CFG.bedrockPort || 19132) + "</small>"
+      ? addrHtml(CFG.bedrockAddress) + '<br><span class="port-line">ポート ' + addrHtml(String(CFG.bedrockPort || 19132)) + "</span>"
       : "準備中");
     setText("st-version", CFG.supportedVersions ? U.esc(CFG.supportedVersions) : "準備中");
     U.applyDiscord(document.getElementById("hero-discord"));

@@ -9,7 +9,12 @@
   <meta property="og:title" content="稲荷クラフト">
   <meta property="og:description" content="サバイバル×経済×会社×自治体。Java版・統合版対応のMinecraftサーバー。">
   <meta property="og:type" content="website">
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <meta property="og:image" content="assets/img/icon-512.png">
+  <link rel="icon" href="assets/img/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/img/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="assets/img/favicon-16.png" type="image/png" sizes="16x16">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="assets/css/style.css">
   <script src="assets/js/config.js" defer></script>
   <script src="assets/js/common.js" defer></script>
@@ -21,27 +26,32 @@
   <main>
     <section class="hero">
       <div class="container">
-        <div>
+        <figure class="hero-emblem">
+          <img src="assets/img/icon-512.png" width="512" height="512" alt="稲荷クラフト公式アイコン">
+        </figure>
+        <div class="hero-text">
           <div class="edition-tags">
             <span class="edition-tag">Java版 対応</span>
             <span class="edition-tag">統合版 対応</span>
           </div>
-          <h1><small>MINECRAFT SURVIVAL ECONOMY SERVER</small>稲荷クラフト</h1>
+          <h1><small>マインクラフト サバイバル経済サーバー</small>稲荷クラフト</h1>
           <p class="hero-lead" id="hero-tagline">実りを育て、市場を動かし、街をつくる。</p>
           <p class="hero-lead">サバイバルで集めた資源を市場で売買し、仲間と会社を興し、自治体で暮らす。プレイヤーの活動がそのまま経済になるサーバーです。</p>
           <div class="hero-actions">
             <a class="btn btn-gold" href="join.html">参加方法を見る</a>
-            <a class="btn btn-outline" id="hero-discord" href="#" target="_blank" rel="noopener">Discordに参加</a>
+            <a class="btn btn-outline" id="hero-discord" href="#" target="_blank" rel="noopener">Discordに参加する</a>
           </div>
         </div>
 
         <aside class="status-panel" aria-labelledby="status-title">
-          <h2 id="status-title">SERVER STATUS</h2>
+          <h2 id="status-title">サーバー状況</h2>
           <div class="status-row"><span class="label">状態</span><span class="value" id="st-online"><span class="status-dot"></span>確認中…</span></div>
           <div class="status-row"><span class="label">オンライン人数</span><span class="value" id="st-players">—</span></div>
-          <div class="status-row"><span class="label">Java版</span><span class="value" id="st-java">準備中</span></div>
-          <div class="status-row"><span class="label">統合版</span><span class="value" id="st-bedrock">準備中</span></div>
           <div class="status-row"><span class="label">対応バージョン</span><span class="value" id="st-version">準備中</span></div>
+          <div class="status-row"><span class="label">Java版アドレス</span><span class="value" id="st-java">準備中</span></div>
+          <div class="status-row"><span class="label">統合版（フレンド参加）</span><span class="value" id="st-friend">準備中</span></div>
+          <div class="status-row"><span class="label">統合版（直接接続）</span><span class="value" id="st-bedrock">準備中</span></div>
+          <p class="status-note"><a href="join.html">詳しい参加方法はこちら →</a></p>
         </aside>
       </div>
     </section>
@@ -134,7 +144,7 @@
           </div>
           <div class="hero-actions" style="margin:0">
             <a class="btn btn-gold" href="join.html">参加方法</a>
-            <a class="btn btn-outline" id="cta-discord" href="#" target="_blank" rel="noopener">Discord</a>
+            <a class="btn btn-outline" id="cta-discord" href="#" target="_blank" rel="noopener">Discordに参加する</a>
           </div>
         </div>
       </div>
