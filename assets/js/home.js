@@ -31,8 +31,29 @@
     });
   }
 
-  /* オンライン人数（javaAddress 設定時のみ取得） */
+  /* オンライン人数：リアルタイム配信があればプラグインからの情報、なければ外部サービスで取得 */
   function renderStatus() {
+    var L = window.InariLive;
+    if (L && L.enabled()) {
+      L.load().then(function (s) {
+        var server = s.data && s.data.server;
+        if (s.status === "online" && server) {
+          setText("st-online", '<span class="status-dot on"></span>オンライン');
+          setText("st-players", U.num(server.onlinePlayers) + (U.isNum(server.maxPlayers) ? " / " + U.num(server.maxPlayers) : "") + " 人");
+        } else if (s.status === "waiting") {
+          renderExternalStatus();
+        } else {
+          setText("st-online", '<span class="status-dot off"></span>' + (s.status === "stopped" ? "停止中" : "オフライン") +
+            '<br><span class="port-line">最終確認 ' + U.esc(L.time(s.lastSeenAt)) + "</span>");
+          setText("st-players", "—");
+        }
+      }).catch(renderExternalStatus);
+      return;
+    }
+    renderExternalStatus();
+  }
+
+  function renderExternalStatus() {
     var addr = U.javaAddress();
     if (!addr || !CFG.showOnlineStatus || !CFG.onlineStatusApi) {
       setText("st-online", '<span class="status-dot"></span>準備中');

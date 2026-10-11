@@ -1,0 +1,19 @@
+# 稲荷クラフト リアルタイム同期 Worker（Cloudflare Workers 無料プランで動作）
+name = "inari-craft-live"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+[vars]
+# サイトの公開元（カンマ区切り）。"*" はどこからでも読み取り可（公開データのみなので既定は "*"）。
+ALLOWED_ORIGINS = "*"
+
+[[durable_objects.bindings]]
+name = "LIVE_HUB"
+class_name = "LiveHub"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["LiveHub"]
+
+# INGEST_SECRET は `npx wrangler secret put INGEST_SECRET` で登録してください（このファイルには書かない）。

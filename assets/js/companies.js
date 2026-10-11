@@ -17,7 +17,7 @@
     { key: "no", label: "順位" },
     { key: "name", label: "会社名" },
     { key: "rank", label: "ランク" },
-    { key: "sales", label: "累計売上", num: true },
+    { key: "sales", label: "売上", num: true },
     { key: "employees", label: "社員数", num: true },
     { key: "stock", label: "株価", num: true },
     { key: "listed", label: "上場状況" }
@@ -36,10 +36,11 @@
       if (key === "name") return String(a.name).localeCompare(String(b.name), "ja");
       var av = KEYS[key](a), bv = KEYS[key](b);
       var an = U.isNum(av), bn = U.isNum(bv);
-      if (!an && !bn) return a.rankNo - b.rankNo;
+      var tie = C.rankSortValue(a) - C.rankSortValue(b) || 0;
+      if (!an && !bn) return tie;
       if (!an) return 1;
       if (!bn) return -1;
-      return (av - bv) * dir || a.rankNo - b.rankNo;
+      return (av - bv) * dir || tie;
     });
     return list;
   }
@@ -77,8 +78,8 @@
           '<td data-label="順位">' + C.rankNoHtml(c.rankNo) + "</td>" +
           '<td class="cell-main" data-label="会社名"><a href="' + U.esc(C.detailUrl(c)) + '" class="item-name">' + U.esc(c.name) + "</a>" +
           (c.industry ? '<span class="item-sub">' + U.esc(c.industry) + "</span>" : "") + "</td>" +
-          '<td data-label="ランク"><span class="badge badge-gold">' + U.esc(c.rank != null && c.rank !== "" ? c.rank : "—") + "</span></td>" +
-          '<td class="num" data-label="累計売上">' + U.money(c.totalSales) + "</td>" +
+          '<td data-label="ランク"><span class="badge badge-gold">' + (U.isNum(c.rank) ? "Rank " : "") + U.esc(c.rank != null && c.rank !== "" ? c.rank : "—") + "</span></td>" +
+          '<td class="num" data-label="売上">' + U.money(c.totalSales) + "</td>" +
           '<td class="num" data-label="社員数">' + (U.isNum(c.employees) ? "<span>" + U.num(c.employees) + "<small>人</small></span>" : "—") + "</td>" +
           '<td class="num" data-label="株価">' + (c.listed ? U.money(c.stockPrice) : "—") + "</td>" +
           '<td data-label="上場状況">' + C.listedBadge(c) + "</td>" +
@@ -112,14 +113,20 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     bind();
-    C.load().then(function (d) {
-      state.data = d;
-      if (d.sample) document.getElementById("companies-notice").innerHTML = U.sampleNotice("会社情報");
-      document.getElementById("companies-meta").textContent =
-        "最終更新：" + U.date(d.updatedAt, true) + "　／　登録 " + d.companies.length + " 社　／　順位は累計売上順";
-      render();
-    }).catch(function (e) {
-      document.getElementById("companies-list").innerHTML = U.errorBox(e.message);
+    C.connect({
+      status: function (html) { document.getElementById("companies-notice").innerHTML = html; },
+      fail: function (message) {
+        if (!state.data) document.getElementById("companies-list").innerHTML = U.errorBox(message);
+      },
+      render: function (d, info) {
+        state.data = d;
+        if (d.sample) document.getElementById("companies-notice").innerHTML = U.sampleNotice("会社情報");
+        document.getElementById("companies-meta").textContent =
+          "最終更新：" + (info.live ? window.InariLive.time(+new Date(d.updatedAt)) : U.date(d.updatedAt, true)) +
+          "　／　登録 " + d.companies.length + " 社　／　" +
+          (info.live ? "順位はゲーム内の会社ランキング（自動販売機の売上、社員による購入を除く）と同じです" : "順位は累計売上順");
+        render();
+      }
     });
   });
 })();

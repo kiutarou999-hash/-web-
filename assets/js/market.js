@@ -3,6 +3,7 @@
   "use strict";
   var U = window.Inari;
   var CFG = window.SITE_CONFIG || {};
+  var L = window.InariLive;
 
   var RANGES = { "24h": 864e5, "7d": 7 * 864e5, "30d": 30 * 864e5 };
   var COLORS = { buy: "#1e4d36", sell: "#b8862b" };
@@ -15,7 +16,8 @@
     cat: "",
     sort: "default",
     current: null,
-    range: "24h"
+    range: "24h",
+    limit: 100
   };
 
   /* ---------- データ参照 ---------- */
@@ -156,6 +158,8 @@
       box.innerHTML = '<div class="empty"><strong>該当するアイテムがありません</strong>検索条件を変えてお試しください。</div>';
       return;
     }
+    var total = rows.length;
+    rows = rows.slice(0, state.limit);
     box.innerHTML = '<div class="table-wrap"><table class="data-table responsive">' +
       "<thead><tr><th>アイテム</th><th class=\"num\">購入価格</th><th class=\"num\">売却価格</th><th class=\"num\">変動率(24h)</th></tr></thead><tbody>" +
       rows.map(function (r) {
@@ -169,14 +173,27 @@
           '<td class="num" data-label="売却価格">' + U.money(r.sell) + "</td>" +
           '<td class="num" data-label="変動率(24h)">' + U.change(r.change) + "</td>" +
           "</tr>";
-      }).join("") + "</tbody></table></div>";
+      }).join("") + "</tbody></table></div>" +
+      (total > rows.length
+        ? '<p style="text-align:center;margin:16px 0 0"><button type="button" class="btn btn-ghost btn-sm" id="more-items">さらに表示（残り ' + (total - rows.length) + " 品目）</button></p>"
+        : "");
+  }
+
+  function currentGroup() {
+    return (state.market.worldGroups || []).filter(function (g) { return g.id === state.wg; })[0] || {};
   }
 
   function renderMeta() {
     var m = state.market;
     var count = (m.items || []).filter(priceOf).length;
+    var help = "購入価格＝ショップで買う値段、売却価格＝ショップに売る値段";
+    if (m.live && currentGroup().kind === "official") {
+      help = "購入価格＝公式ショップで買う値段、売却価格＝公式ショップで売ったときの出品価格（市場で売れた時に入金）。1日の取引上限を超えたプレイヤーは購入2倍・売却半額になります";
+    } else if (m.live) {
+      help = "購入価格＝最安の出品を買うときの1個あたりの値段（手数料込み・送料は場所により別途）、売却価格＝出品者の受取額。表示中のワールドグループで共通の市場です";
+    }
     document.getElementById("market-meta").textContent =
-      "最終更新：" + U.date(m.updatedAt, true) + "　／　掲載 " + count + " 品目　／　購入価格＝ショップで買う値段、売却価格＝ショップに売る値段";
+      "最終更新：" + (m.live ? L.time(+new Date(m.updatedAt)) : U.date(m.updatedAt, true)) + "　／　掲載 " + count + " 品目　／　" + help;
   }
 
   function renderAll() {
@@ -195,16 +212,24 @@
     document.getElementById("item-dialog-title").textContent = item.name;
     var icon = document.getElementById("dlg-icon");
     icon.outerHTML = iconHtml(item).replace('class="item-icon"', 'class="item-icon" id="dlg-icon"');
-    var wgName = ((state.market.worldGroups || []).filter(function (g) { return g.id === state.wg; })[0] || {}).name || "";
-    document.getElementById("dlg-stats").innerHTML =
-      '<div class="stat"><div class="k">購入価格</div><div class="v">' + U.money(p.buy) + "</div></div>" +
-      '<div class="stat"><div class="k">売却価格</div><div class="v">' + U.money(p.sell) + "</div></div>" +
-      '<div class="stat"><div class="k">変動率(24h)</div><div class="v">' + U.change(change24h(item)) + "</div></div>" +
-      '<div class="stat"><div class="k">ワールドグループ</div><div class="v" style="font-size:1rem">' + U.esc(wgName) + "</div></div>";
+    renderDialogStats();
     renderChart();
     var dlg = document.getElementById("item-dialog");
     if (typeof dlg.showModal === "function") dlg.showModal();
     else dlg.setAttribute("open", "");
+  }
+
+  function renderDialogStats() {
+    var item = state.current;
+    if (!item) return;
+    var p = priceOf(item) || {};
+    var wgName = currentGroup().name || "";
+    document.getElementById("dlg-stats").innerHTML =
+      '<div class="stat"><div class="k">購入価格</div><div class="v">' + U.money(p.buy) + "</div></div>" +
+      '<div class="stat"><div class="k">売却価格</div><div class="v">' + U.money(p.sell) + "</div></div>" +
+      '<div class="stat"><div class="k">変動率(24h)</div><div class="v">' + U.change(change24h(item)) + "</div></div>" +
+      (U.isNum(p.available) ? '<div class="stat"><div class="k">出品数</div><div class="v">' + U.num(p.available) + "<small>個</small></div></div>" : "") +
+      '<div class="stat"><div class="k">' + (state.market.live ? "対象" : "ワールドグループ") + '</div><div class="v" style="font-size:1rem">' + U.esc(wgName) + "</div></div>";
   }
 
   function renderChart() {
@@ -212,10 +237,37 @@
     if (!item) return;
     var to = refTime();
     var from = new Date(+to - RANGES[state.range]);
+    if (state.market.live) {
+      renderLiveChart(item, from, to);
+      return;
+    }
     var hist = historyOf(item.id).filter(function (h) {
       var t = +new Date(h.t);
       return t >= +from && t <= +to;
     });
+    drawChart(item, hist, from, to);
+  }
+
+  /** 配信サーバーに保存された履歴を取得し、現在値を右端に加えて描きます。 */
+  function renderLiveChart(item, from, to) {
+    var p = priceOf(item);
+    var box = document.getElementById("dlg-chart");
+    if (!p || !p.series) { drawChart(item, [], from, to); return; }
+    var wanted = item.id + "|" + state.wg + "|" + state.range;
+    box.setAttribute("data-wanted", wanted);
+    L.history(p.series, state.range).then(function (points) {
+      if (box.getAttribute("data-wanted") !== wanted) return;
+      var hist = points.map(function (x) {
+        return { t: new Date(Math.max(x[0], +from)).toISOString(), buy: x[p.buyIndex], sell: x[p.sellIndex] };
+      });
+      if (hist.length) hist.push({ t: to.toISOString(), buy: p.buy, sell: p.sell });
+      drawChart(item, hist, from, to);
+    }).catch(function (e) {
+      if (box.getAttribute("data-wanted") === wanted) box.innerHTML = '<div class="chart-empty">' + U.esc(e.message) + "</div>";
+    });
+  }
+
+  function drawChart(item, hist, from, to) {
     U.lineChart(document.getElementById("dlg-chart"), {
       series: [
         { label: "購入価格", color: COLORS.buy, points: hist.map(function (h) { return { t: h.t, v: h.buy }; }) },
@@ -234,18 +286,21 @@
       var b = e.target.closest("[data-wg]");
       if (!b) return;
       state.wg = b.getAttribute("data-wg");
+      state.limit = 100;
       try { localStorage.setItem("inari.market.wg", state.wg); } catch (err) { /* 無視 */ }
       renderAll();
     });
     document.getElementById("q").addEventListener("input", U.debounce(function (e) {
       state.q = e.target.value;
+      state.limit = 100;
       renderList();
     }, 120));
-    document.getElementById("cat").addEventListener("change", function (e) { state.cat = e.target.value; renderList(); });
+    document.getElementById("cat").addEventListener("change", function (e) { state.cat = e.target.value; state.limit = 100; renderList(); });
     document.getElementById("sort").addEventListener("change", function (e) { state.sort = e.target.value; renderList(); });
 
     var list = document.getElementById("market-list");
     list.addEventListener("click", function (e) {
+      if (e.target.closest("#more-items")) { state.limit += 200; renderList(); return; }
       var tr = e.target.closest("[data-item]");
       if (tr) openItem(tr.getAttribute("data-item"));
     });
@@ -268,8 +323,56 @@
     });
   }
 
+  function chooseGroup() {
+    var groups = state.market.worldGroups || [];
+    if (groups.some(function (g) { return g.id === state.wg; })) return;
+    var saved = null;
+    try { saved = localStorage.getItem("inari.market.wg"); } catch (err) { /* 無視 */ }
+    state.wg = groups.some(function (g) { return g.id === saved; }) ? saved : (groups[0] && groups[0].id);
+  }
+
+  /** リアルタイム配信：データが更新されるたびに、検索条件や開いている詳細を保ったまま描き直します。 */
+  function startLive() {
+    L.connect({
+      staticPath: CFG.dataPath.market,
+      adapt: L.toMarket,
+      status: function (html) { document.getElementById("market-notice").innerHTML = html; },
+      fail: function (message) {
+        if (!state.market) document.getElementById("market-list").innerHTML = U.errorBox(message);
+      },
+      render: function (data, info) {
+        if (!info.live) {
+          // 配信に接続できず、実データの静的ファイルに切り替えたとき
+          state.market = data;
+          state.history = {};
+          chooseGroup();
+          renderCategories();
+          renderAll();
+          return;
+        }
+        state.market = data;
+        chooseGroup();
+        renderCategories();
+        var sel = document.getElementById("cat");
+        if (state.cat && sel.querySelector('option[value="' + CSS.escape(state.cat) + '"]')) sel.value = state.cat;
+        else state.cat = "";
+        renderAll();
+        var dlg = document.getElementById("item-dialog");
+        if (state.current && dlg.open) {
+          state.current = itemById(state.current.id) || state.current;
+          renderDialogStats();
+          renderChart();
+        }
+      }
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     bind();
+    if (L && L.enabled()) {
+      startLive();
+      return;
+    }
     Promise.all([
       U.fetchJSON(CFG.dataPath.market),
       U.fetchJSON(CFG.dataPath.marketHistory).catch(function () { return { groups: {} }; })
