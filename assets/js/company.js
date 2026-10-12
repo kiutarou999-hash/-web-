@@ -13,7 +13,7 @@
   function notFound(msg) {
     document.getElementById("company-head").innerHTML = '<h1 style="margin:0">会社が見つかりません</h1>';
     document.getElementById("company-body").innerHTML =
-      '<div class="empty"><strong>' + U.esc(msg) + '</strong><a href="companies.html">会社ランキングへ戻る</a></div>';
+      '<div class="empty"><strong>' + U.esc(msg) + '</strong><a href="companies.html">会社一覧へ戻る</a></div>';
   }
 
   function stat(label, value) {
@@ -98,7 +98,7 @@
           }).join("") + "</ul>"
         : '<p style="margin:0;color:var(--ink-mute)">社員情報は公開されていません。</p>') +
       "</div></div></div>" +
-      '<p style="margin-top:28px"><a class="btn btn-ghost btn-sm" href="companies.html">← 会社ランキングへ戻る</a></p>';
+      '<p style="margin-top:28px"><a class="btn btn-ghost btn-sm" href="companies.html">← 会社一覧へ戻る</a></p>';
 
     document.getElementById("company-body").innerHTML = html;
 

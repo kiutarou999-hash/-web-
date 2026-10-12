@@ -24,6 +24,12 @@
     setText("st-version", CFG.supportedVersions ? U.esc(CFG.supportedVersions) : "準備中");
     U.applyDiscord(document.getElementById("hero-discord"));
     U.applyDiscord(document.getElementById("cta-discord"));
+    // 地図（Pl3xMap）は config.js の mapUrl を設定したときだけ表示。HTTP の地図は埋め込まず、新しいタブで開きます。
+    var map = document.getElementById("hero-map");
+    if (map && CFG.mapUrl && /^https?:\/\//.test(CFG.mapUrl)) {
+      map.href = CFG.mapUrl;
+      map.hidden = false;
+    }
 
     document.addEventListener("click", function (e) {
       var b = e.target.closest("[data-copy]");

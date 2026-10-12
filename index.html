@@ -4,12 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>稲荷クラフト｜サバイバル×経済×会社×自治体 Minecraftサーバー</title>
-  <meta name="description" content="稲荷クラフトは Java版・統合版に対応したサバイバル経済サーバーです。市場相場・会社ランキング・自治体情報をゲーム外からも確認できます。">
+  <meta name="description" content="稲荷クラフトは Java版・統合版に対応したサバイバル経済サーバーです。アイテム相場・会社一覧・自治体一覧をゲーム外からも確認できます。">
   <meta name="theme-color" content="#0f2a1d">
   <meta property="og:title" content="稲荷クラフト">
   <meta property="og:description" content="サバイバル×経済×会社×自治体。Java版・統合版対応のMinecraftサーバー。">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/img/icon-512.png">
+  <meta property="og:image" content="https://kiutarou999-hash.github.io/-web-/assets/img/og-hub.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/img/favicon.ico" sizes="any">
   <link rel="icon" href="assets/img/favicon-32.png" type="image/png" sizes="32x32">
   <link rel="icon" href="assets/img/favicon-16.png" type="image/png" sizes="16x16">
@@ -25,11 +28,12 @@
   <header id="site-header" class="site-header"></header>
 
   <main>
-    <section class="hero">
+    <section class="hero hero-photo">
+      <picture class="hero-bg">
+        <source type="image/webp" srcset="assets/img/hero-hub-960.webp 960w, assets/img/hero-hub-1600.webp 1600w" sizes="100vw">
+        <img src="assets/img/hero-hub-1600.jpg" width="1600" height="900" alt="稲荷クラフトのHub。桜並木の参道の先に朱色の鳥居と社殿が建っている" fetchpriority="high" decoding="async">
+      </picture>
       <div class="container">
-        <figure class="hero-emblem">
-          <img src="assets/img/icon-512.png" width="512" height="512" alt="稲荷クラフト公式アイコン">
-        </figure>
         <div class="hero-text">
           <div class="edition-tags">
             <span class="edition-tag">Java版 対応</span>
@@ -37,10 +41,11 @@
           </div>
           <h1><small>マインクラフト サバイバル経済サーバー</small>稲荷クラフト</h1>
           <p class="hero-lead" id="hero-tagline">実りを育て、市場を動かし、街をつくる。</p>
-          <p class="hero-lead">サバイバルで集めた資源を市場で売買し、仲間と会社を興し、自治体で暮らす。プレイヤー同士の取引で経済が動くサーバーです。</p>
+          <p class="hero-lead">集めた資源をプレイヤー同士で売買し、仲間と会社を興し、自治体で暮らす。プレイヤーの取引で経済が動くサーバーです。</p>
           <div class="hero-actions">
             <a class="btn btn-gold" href="join.html">参加方法を見る</a>
             <a class="btn btn-outline" id="hero-discord" href="#" target="_blank" rel="noopener">Discordに参加する</a>
+            <a class="btn btn-outline" id="hero-map" href="#" target="_blank" rel="noopener" hidden>ワールドの地図を見る</a>
           </div>
         </div>
 
@@ -55,6 +60,7 @@
           <p class="status-note"><a href="join.html">詳しい参加方法はこちら →</a></p>
         </aside>
       </div>
+      <p class="hero-credit">写真：サーバーのHub（ロビー）</p>
     </section>
 
     <section class="section">
@@ -69,12 +75,12 @@
           <article class="card feature reveal">
             <div class="feature-kanji" aria-hidden="true">生</div>
             <h3>サバイバル</h3>
-            <p>バニラに近い感覚で、採掘・農業・漁業・建築を楽しめます。集めた資源は公式ショップやプレイヤー市場で売りに出せます。</p>
+            <p>バニラに近い感覚で、採掘・農業・漁業・建築を楽しめます。集めたアイテムはプレイヤー市場や自動販売機で売りに出せます。</p>
           </article>
           <article class="card feature reveal">
             <div class="feature-kanji" aria-hidden="true">商</div>
             <h3>経済</h3>
-            <p>公式ショップの購入価格は買われるほど上がり、毎月リセットされます。プレイヤー市場の価格は出品と購入の状況で変わります。</p>
+            <p>売買はプレイヤー同士の市場で行います。価格は出品数と購入数に応じて変わり、相場はこのサイトでも確認できます。</p>
           </article>
           <article class="card feature reveal">
             <div class="feature-kanji" aria-hidden="true">社</div>
@@ -102,17 +108,17 @@
           <a class="card link-card reveal" href="market.html">
             <div class="card-body">
               <svg class="link-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/></svg>
-              <h3>市場相場</h3>
-              <p>公式ショップとプレイヤー市場の価格、24時間の変動率、価格推移グラフを確認できます。</p>
+              <h3>アイテム相場</h3>
+              <p>プレイヤー市場の価格、24時間の変動率、価格推移グラフ、売却時の出品価格を確認できます。</p>
               <span class="more">相場を見る</span>
             </div>
           </a>
           <a class="card link-card reveal" href="companies.html">
             <div class="card-body">
               <svg class="link-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V8l6-4v17"/><path d="M10 21V10l10 3v8"/><path d="M2 21h20"/><path d="M14 15h2M14 18h2"/></svg>
-              <h3>会社ランキング</h3>
+              <h3>会社一覧</h3>
               <p>会社売上・社員数・株価で会社を比較できます。各社の詳細ページもあります。</p>
-              <span class="more">ランキングを見る</span>
+              <span class="more">会社一覧を見る</span>
             </div>
           </a>
           <a class="card link-card reveal" href="municipalities.html">

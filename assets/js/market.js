@@ -1,4 +1,4 @@
-/* 市場相場ページ */
+/* アイテム相場ページ */
 (function () {
   "use strict";
   var U = window.Inari;
@@ -57,6 +57,19 @@
     return ((p.buy - base.buy) / base.buy) * 100;
   }
 
+  /*
+   * タブごとの列名。プレイヤー市場では「購入時の価格（手数料込み）」と「出品者の受取額」、
+   * 売却時の出品価格タブでは出品価格だけを表示します。liveApi 未設定時（手動データ）は従来の名前です。
+   */
+  var LABELS = {
+    market: { buy: "購入時の価格", sell: "出品者の受取額" },
+    listing: { buy: null, sell: "出品価格" },
+    manual: { buy: "購入価格", sell: "売却価格" }
+  };
+  function labels() {
+    return (state.market && state.market.live && LABELS[currentGroup().kind]) || LABELS.manual;
+  }
+
   function itemById(id) {
     return (state.market.items || []).filter(function (i) { return i.id === id; })[0];
   }
@@ -83,13 +96,29 @@
   function renderCategories() {
     var cats = [];
     (state.market.items || []).forEach(function (i) {
-      if (i.category && cats.indexOf(i.category) < 0) cats.push(i.category);
+      if (priceOf(i) && i.category && cats.indexOf(i.category) < 0) cats.push(i.category);
     });
     var sel = document.getElementById("cat");
+    if (state.cat && cats.indexOf(state.cat) < 0) state.cat = "";
     sel.innerHTML = '<option value="">すべてのカテゴリ</option>' + cats.map(function (c) {
       return '<option value="' + U.esc(c) + '">' + U.esc(c) + "</option>";
     }).join("");
+    sel.value = state.cat;
     sel.parentNode.hidden = cats.length === 0;
+  }
+
+  /** 並び替えの選択肢をタブの列名に合わせます（列がない項目は隠します）。 */
+  function renderSortOptions() {
+    var lb = labels();
+    var sel = document.getElementById("sort");
+    Array.prototype.forEach.call(sel.options, function (o) {
+      var key = o.value.split("-")[0], dir = o.value.split("-")[1];
+      if (key === "buy" || key === "sell") {
+        o.hidden = o.disabled = !lb[key];
+        if (lb[key]) o.textContent = lb[key] + (dir === "desc" ? "が高い順" : "が安い順");
+      }
+    });
+    if (sel.selectedOptions[0] && sel.selectedOptions[0].disabled) { sel.value = "default"; state.sort = "default"; }
   }
 
   function filteredItems() {
@@ -130,16 +159,18 @@
     }
     var total = rows.length;
     rows = rows.slice(0, state.limit);
+    var lb = labels();
     box.innerHTML = '<div class="table-wrap"><table class="data-table responsive">' +
-      "<thead><tr><th>アイテム</th><th class=\"num\">購入価格</th><th class=\"num\">売却価格</th><th class=\"num\">変動率(24h)</th></tr></thead><tbody>" +
+      "<thead><tr><th>アイテム</th>" + (lb.buy ? '<th class="num">' + U.esc(lb.buy) + "</th>" : "") +
+      '<th class="num">' + U.esc(lb.sell) + '</th><th class="num">変動率(24h)</th></tr></thead><tbody>' +
       rows.map(function (r) {
         var i = r.item;
         return '<tr class="is-link" tabindex="0" data-item="' + U.esc(i.id) + '">' +
           '<td class="cell-main"><div class="item-cell">' + iconHtml(i) +
           '<div><span class="item-name">' + U.esc(i.name) + "</span>" +
           '<span class="item-sub">' + U.esc(i.category || i.id) + "</span></div></div></td>" +
-          '<td class="num" data-label="購入価格">' + U.money(r.buy) + "</td>" +
-          '<td class="num" data-label="売却価格">' + U.money(r.sell) + "</td>" +
+          (lb.buy ? '<td class="num" data-label="' + U.esc(lb.buy) + '">' + U.money(r.buy) + "</td>" : "") +
+          '<td class="num" data-label="' + U.esc(lb.sell) + '">' + U.money(r.sell) + "</td>" +
           '<td class="num" data-label="変動率(24h)">' + U.change(r.change) + "</td>" +
           "</tr>";
       }).join("") + "</tbody></table></div>" +
@@ -154,22 +185,23 @@
 
   /*
    * 価格の見方（MoroMenuShop の実装に基づく説明）
-   *  公式ショップ: ShopEntry の現在価格。購入されるたびに購入価格が上がり、毎月はじめ（日本時間）に基準価格へ戻る。
-   *    売却は即時の買い取りではなく、その価格を基準にプレイヤー市場へ出品する処理（MenuService → SellService）。
-   *    1日の購入額が上限を超えたプレイヤーは購入2倍（OfficialShopDailyLimitService。売却額は記録されないため売却半額は発生しない）。
-   *  プレイヤー市場: data-group ごとに、最も古い（＝最初に表示される）出品の現在価格。購入時は手数料が加わり、送料は場所で変わる。
+   *  プレイヤー市場: data-group ごとに、同じアイテムで最も古い出品（購入画面に表示される出品）の現在価格。
+   *    出品者の受取額 = MarketDataService.currentUnitSellPrice（出品時の価格に、その市場の出品数・購入数による係数を掛けた額）。
+   *    購入時の価格 = 受取額 × market.inventory.sell-price-multiplier（手数料込み）。送料は購入場所で変わるため含まない。
+   *  売却時の出品価格: ゲーム内の「売却」（/s）で出品するときの1個あたりの基準価格（prices.yml の売却価格）。
+   *    価格表に売却価格がないアイテムは「売却」から出品できない（MenuService.isMenuMarketSellable）。
+   *  旧公式ショップの購入はゲーム内から利用できないため、購入価格は表示しない。
    */
   var HELP = {
-    official: [
-      "購入価格：公式ショップで1個買うときの現在の価格です。購入されるたびに上がり、毎月はじめ（日本時間）に元の価格へ戻ります。",
-      "売却価格：公式ショップの売却画面に表示される1個あたりの価格です。",
-      "公式ショップで売却したアイテムは、この価格を基準にプレイヤー市場へ出品され、ほかのプレイヤーが購入したときに代金が入ります。受取額は出品先の市場の状況によって変わります。",
-      "1日の公式ショップでの購入額が上限（プレイヤーごとに異なります）を超えると、その日の購入価格は2倍になります（ネザライトインゴットを除く）。表示しているのは上限を超えていないときの価格です。"
-    ],
     market: [
-      "購入価格：いちばん安い出品を1個買うときの価格です（手数料込み）。送料は購入する場所によって別にかかります。",
-      "売却価格：その出品が売れたときに、出品者が1個あたりに受け取る金額です。",
-      "価格は出品数と購入数に応じて変わります。（　）内のワールドで共通の市場です。"
+      "購入時の価格：この市場でいちばん安い出品を1個買うときの価格です（手数料込み）。送料は購入する場所によって別にかかります。",
+      "出品者の受取額：その出品が売れたときに、出品者が1個あたりに受け取る金額です。",
+      "どちらも、この市場の出品数と購入数に応じて変わります。（　）内のワールドで共通の市場です。"
+    ],
+    listing: [
+      "ゲーム内の「売買」→「売却」（/s）でアイテムを出すと、ここに表示している価格を基準に、そのワールドのプレイヤー市場へ出品されます。",
+      "実際に売れたときの受取額は、出品先の市場の出品数と購入数に応じて、この価格から上下します。",
+      "ここに載っていないアイテムは「売却」から出品できません。価格は運営の設定によって変わることがあります。"
     ]
   };
 
@@ -188,6 +220,8 @@
 
   function renderAll() {
     renderTabs();
+    renderCategories();
+    renderSortOptions();
     renderMeta();
     renderList();
   }
@@ -213,12 +247,13 @@
     if (!item) return;
     var p = priceOf(item) || {};
     var wgName = currentGroup().name || "";
+    var lb = labels();
     document.getElementById("dlg-stats").innerHTML =
-      '<div class="stat"><div class="k">購入価格</div><div class="v">' + U.money(p.buy) + "</div></div>" +
-      '<div class="stat"><div class="k">売却価格</div><div class="v">' + U.money(p.sell) + "</div></div>" +
+      (lb.buy ? '<div class="stat"><div class="k">' + U.esc(lb.buy) + '</div><div class="v">' + U.money(p.buy) + "</div></div>" : "") +
+      '<div class="stat"><div class="k">' + U.esc(lb.sell) + '</div><div class="v">' + U.money(p.sell) + "</div></div>" +
       '<div class="stat"><div class="k">変動率(24h)</div><div class="v">' + U.change(change24h(item)) + "</div></div>" +
       (U.isNum(p.available) ? '<div class="stat"><div class="k">出品数</div><div class="v">' + U.num(p.available) + "<small>個</small></div></div>" : "") +
-      '<div class="stat"><div class="k">' + (state.market.live ? "市場" : "ワールドグループ") + '</div><div class="v" style="font-size:1rem">' + U.esc(wgName) + "</div></div>";
+      '<div class="stat"><div class="k">' + (state.market.live ? "表示中の一覧" : "ワールドグループ") + '</div><div class="v" style="font-size:1rem">' + U.esc(wgName) + "</div></div>";
   }
 
   function renderChart() {
@@ -247,7 +282,7 @@
     L.history(p.series, state.range).then(function (points) {
       if (box.getAttribute("data-wanted") !== wanted) return;
       var hist = points.map(function (x) {
-        return { t: new Date(Math.max(x[0], +from)).toISOString(), buy: x[p.buyIndex], sell: x[p.sellIndex] };
+        return { t: new Date(Math.max(x[0], +from)).toISOString(), buy: p.buyIndex ? x[p.buyIndex] : null, sell: x[p.sellIndex] };
       });
       if (hist.length) hist.push({ t: to.toISOString(), buy: p.buy, sell: p.sell });
       drawChart(item, hist, from, to);
@@ -257,11 +292,12 @@
   }
 
   function drawChart(item, hist, from, to) {
+    var lb = labels();
+    var series = [];
+    if (lb.buy) series.push({ label: lb.buy, color: COLORS.buy, points: hist.map(function (h) { return { t: h.t, v: h.buy }; }) });
+    series.push({ label: lb.sell, color: COLORS.sell, points: hist.map(function (h) { return { t: h.t, v: h.sell }; }) });
     U.lineChart(document.getElementById("dlg-chart"), {
-      series: [
-        { label: "購入価格", color: COLORS.buy, points: hist.map(function (h) { return { t: h.t, v: h.buy }; }) },
-        { label: "売却価格", color: COLORS.sell, points: hist.map(function (h) { return { t: h.t, v: h.sell }; }) }
-      ],
+      series: series,
       from: from,
       to: to,
       ariaLabel: item.name + " の価格推移",
@@ -335,16 +371,11 @@
           state.market = data;
           state.history = {};
           chooseGroup();
-          renderCategories();
           renderAll();
           return;
         }
         state.market = data;
         chooseGroup();
-        renderCategories();
-        var sel = document.getElementById("cat");
-        if (state.cat && sel.querySelector('option[value="' + CSS.escape(state.cat) + '"]')) sel.value = state.cat;
-        else state.cat = "";
         renderAll();
         var dlg = document.getElementById("item-dialog");
         if (state.current && dlg.open) {

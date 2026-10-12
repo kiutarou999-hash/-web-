@@ -140,13 +140,18 @@
 
   /* ---------- ページ用のデータ形式へ変換 ---------- */
 
-  /** 市場：「公式ショップ（全体共通）」と「data-group ごとのプレイヤー市場」をタブに分けます。 */
+  /*
+   * 相場ページ用の変換。
+   *  - プレイヤー市場（data-group ごと）: 購入時の価格（手数料込み）と出品者の受取額。
+   *  - 売却時の出品価格: ゲーム内の「売却」で出品するときの基準価格（MoroMenuShop の価格表 prices.yml の売却価格）。
+   * 旧公式ショップの「購入」はゲーム内から利用できない（購入ボタンはプレイヤー市場を開く）ため、購入価格は使いません。
+   */
   L.toMarket = function (s) {
     var d = s.data || {};
     var ch = s.change24h || {};
     var wgName = {};
     (d.worldGroups || []).forEach(function (g) { wgName[g.id] = groupName(g.id, g.name); });
-    var groups = [{ id: "official", name: "公式ショップ（全ワールド共通）", kind: "official" }];
+    var groups = [];
     ((d.playerMarket || {}).dataGroups || []).forEach(function (g) {
       // 出品が1件もない data-group（テスト用ワールドなど）はタブを出しません。
       if (!(g.items || []).length) return;
@@ -156,30 +161,35 @@
         name: "プレイヤー市場（" + (g.worldGroups || []).map(function (id) { return wgName[id] || id; }).join("・") + "）"
       });
     });
+    var catalog = ((d.officialShop || {}).items || []).filter(function (i) { return U.isNum(i.sell); });
+    if (catalog.length) groups.push({ id: "listing", kind: "listing", name: "売却時の出品価格" });
+    var categoryOf = {};
+    catalog.forEach(function (i) { categoryOf[i.id] = i.categoryName; });
     var items = {}, order = [];
-    function item(id, name, category) {
+    function item(id, name) {
       if (!items[id]) {
-        items[id] = { id: id, name: name, category: category || "その他", image: "", prices: {} };
+        items[id] = { id: id, name: name, category: categoryOf[id] || "その他", image: "", prices: {} };
         order.push(id);
       }
       return items[id];
     }
-    ((d.officialShop || {}).items || []).forEach(function (i) {
-      item(i.id, i.name, i.categoryName).prices.official = {
-        buy: i.buy, sell: i.sell,
-        change24h: change(ch, "o:" + i.id, 0),
-        series: "o:" + i.id, buyIndex: 1, sellIndex: 2
-      };
-    });
     ((d.playerMarket || {}).dataGroups || []).forEach(function (g) {
       (g.items || []).forEach(function (i) {
         var series = "m:" + g.id + ":" + i.id;
-        item(i.id, i.name, null).prices["market:" + g.id] = {
+        item(i.id, i.name).prices["market:" + g.id] = {
           buy: i.lowestBuyerPrice, sell: i.lowestUnitPrice, available: i.available, offers: i.offers,
           change24h: change(ch, series, 1),
           series: series, buyIndex: 2, sellIndex: 1
         };
       });
+    });
+    catalog.forEach(function (i) {
+      // 系列 o:<id> の b（2番目の値）が売却価格。a（購入価格）は使いません。
+      item(i.id, i.name).prices.listing = {
+        sell: i.sell,
+        change24h: change(ch, "o:" + i.id, 1),
+        series: "o:" + i.id, sellIndex: 2
+      };
     });
     return {
       live: true,

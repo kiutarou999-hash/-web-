@@ -1,4 +1,4 @@
-/* 会社ランキングページ */
+/* 会社一覧ページ */
 (function () {
   "use strict";
   var U = window.Inari;

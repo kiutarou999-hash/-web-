@@ -9,8 +9,8 @@
   var NAV = [
     { href: "index.html", label: "トップ", key: "home" },
     { href: "join.html", label: "参加方法", key: "join" },
-    { href: "market.html", label: "市場相場", key: "market" },
-    { href: "companies.html", label: "会社ランキング", key: "companies" },
+    { href: "market.html", label: "アイテム相場", key: "market" },
+    { href: "companies.html", label: "会社一覧", key: "companies" },
     { href: "municipalities.html", label: "自治体一覧", key: "municipalities" }
   ];
 
