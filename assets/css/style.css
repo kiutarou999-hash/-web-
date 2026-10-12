@@ -357,11 +357,6 @@ button, input, select { font: inherit; color: inherit; }
 .rule-list li { margin-bottom: .4em; }
 
 /* ---------- Market ---------- */
-.demand-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-bottom: 32px; }
-.demand-card { border-left: 4px solid var(--gold-500); padding: 16px 18px; }
-.demand-card .mult { font-family: var(--font-num); font-weight: 700; color: var(--gold-600); font-size: 1.3rem; }
-.demand-card .meta { font-size: .8rem; color: var(--ink-mute); }
-.demand-card p { margin: 6px 0 0; font-size: .88rem; color: var(--ink-soft); }
 
 /* ---------- Dialog ---------- */
 dialog.panel {
@@ -452,3 +447,7 @@ dialog.panel::backdrop { background: rgba(15, 42, 29, .55); }
 /* プレイヤーが付けた長い名前（区切りのない英数字など）でも表やカードがはみ出さないように折り返す */
 .data-table td, .item-name, .muni-card h3, .company-head h1, .dl-grid dd, .breadcrumb span { overflow-wrap: anywhere; word-break: normal; }
 .data-table td.cell-main { min-width: 0; }
+.price-help { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 14px; margin: 0 0 16px; font-size: .88rem; color: var(--ink-soft); }
+.price-help summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+.price-help ul { margin: 8px 0 0; padding-left: 1.2em; }
+.price-help li + li { margin-top: 4px; }

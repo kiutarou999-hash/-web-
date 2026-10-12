@@ -58,7 +58,6 @@
       [m.mayorTitle || "首長", m.mayor ? U.esc(m.mayor) + L.editionBadge(m.mayorEdition) : ""],
       ["区分", U.esc(m.type || "")],
       ["ワールドグループ", U.esc(m.worldGroup || "")],
-      ["データグループ", info.live ? U.esc(m.dataGroup || "") : ""],
       ["設立日", m.foundedAt ? U.esc(U.date(m.foundedAt)) : ""],
       ["中心座標", m.center ? "X " + U.num(m.center.x, 0) + " / Y " + U.num(m.center.y, 0) + " / Z " + U.num(m.center.z, 0) : ""]
     ].filter(function (r) { return r[1]; });
@@ -67,10 +66,11 @@
     var html = "";
     if (d.sample) html += U.sampleNotice("自治体情報");
     html += '<div class="stat-row">' +
-      '<div class="stat"><div class="k">' + (info.live ? "住民" : "人口") + '</div><div class="v">' + (U.isNum(m.population) ? U.num(m.population) + "<small>人</small>" : "—") + "</div></div>" +
+      '<div class="stat"><div class="k">' + "住民数" + '</div><div class="v">' + (U.isNum(m.population) ? U.num(m.population) + "<small>人</small>" : "—") + "</div></div>" +
       '<div class="stat"><div class="k">税率</div><div class="v">' + (U.isNum(m.taxRate) ? U.num(m.taxRate * 100, 1) + "<small>%</small>" : "—") + "</div></div>" +
       '<div class="stat"><div class="k">領域</div><div class="v">' + (m.territory && U.isNum(m.territory.chunks) ? U.num(m.territory.chunks) + "<small>チャンク</small>" : "—") + "</div></div>" +
       "</div>" +
+      (U.isNum(m.taxRate) ? '<p class="meta-line" style="margin-top:-8px">税率：自治体の領域内にある土地保護の保護料金のうち、自治体の収入になる割合です。保護料金を支払う側の金額は変わりません。</p>' : "") +
       '<div class="two-col"><div>' +
       (m.description ? '<div class="card card-body" style="margin-bottom:20px"><h2 style="font-size:1.15rem">紹介</h2><p style="margin:0;white-space:pre-wrap">' + U.esc(m.description) + "</p></div>" : "") +
       (map ? '<div class="card card-body"><h2 style="font-size:1.15rem">自治体の領域</h2>' + map + "</div>" : "") +

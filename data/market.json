@@ -170,15 +170,5 @@
         }
       }
     }
-  ],
-  "specialDemands": [
-    {
-      "worldGroup": "main",
-      "itemId": "rice",
-      "multiplier": 1.5,
-      "start": "2026-10-10T00:00:00+09:00",
-      "end": "2026-10-17T23:59:00+09:00",
-      "note": "秋の収穫祭にともなう特需（サンプル）"
-    }
   ]
 }

@@ -101,7 +101,7 @@
     var cls, title, text;
     if (error && !s) {
       cls = "off"; title = "配信サーバーに接続できません";
-      text = "時間をおいて再読み込みしてください。ゲーム内の情報はサーバー内で保持されています。";
+      text = "しばらくしてから再読み込みしてください。";
     } else if (error) {
       cls = "off"; title = "配信サーバーとの通信が途切れています";
       text = "表示中の情報は " + time(s.generatedAt) + " 時点のものです。自動で再接続します。";
@@ -123,6 +123,16 @@
       "<div><strong>" + U.esc(title) + "</strong>" + U.esc(text) + "</div></div>";
   };
 
+  /*
+   * サーバーの config.yml に display-name がないワールドグループは、ID（例: resource）がそのまま名前として届きます。
+   * その場合だけ、MoroMenuShop の既定設定（src/main/resources/config.yml）と同じ表示名を使います。
+   */
+  var DEFAULT_GROUP_NAMES = { permanent: "常設ワールド", resource: "資源ワールド", tutorial: "チュートリアル", hub: "Hub" };
+  function groupName(id, name) {
+    if (name && name !== id) return name;
+    return DEFAULT_GROUP_NAMES[id] || name || id || "";
+  }
+
   function change(map, series, index) {
     var v = map && map[series];
     return v && U.isNum(v[index]) ? v[index] : null;
@@ -135,7 +145,7 @@
     var d = s.data || {};
     var ch = s.change24h || {};
     var wgName = {};
-    (d.worldGroups || []).forEach(function (g) { wgName[g.id] = g.name; });
+    (d.worldGroups || []).forEach(function (g) { wgName[g.id] = groupName(g.id, g.name); });
     var groups = [{ id: "official", name: "公式ショップ（全ワールド共通）", kind: "official" }];
     ((d.playerMarket || {}).dataGroups || []).forEach(function (g) {
       // 出品が1件もない data-group（テスト用ワールドなど）はタブを出しません。
@@ -221,7 +231,7 @@
         name: m.name,
         type: m.stageName,
         stage: m.stage,
-        worldGroup: m.worldGroupName || m.worldGroup || "",
+        worldGroup: groupName(m.worldGroup, m.worldGroupName),
         worldGroupId: m.worldGroup,
         dataGroup: m.dataGroup,
         mayor: m.leader && m.leader.name ? m.leader.name : "不明",

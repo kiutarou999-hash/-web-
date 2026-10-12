@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>市場相場｜稲荷クラフト</title>
-  <meta name="description" content="稲荷クラフト公式ショップの購入価格・売却価格・変動率・価格推移・特需情報。">
+  <meta name="description" content="稲荷クラフトの公式ショップとプレイヤー市場の価格・24時間の変動率・価格推移。">
   <meta name="theme-color" content="#0f2a1d">
   <link rel="icon" href="assets/img/favicon.ico" sizes="any">
   <link rel="icon" href="assets/img/favicon-32.png" type="image/png" sizes="32x32">
@@ -26,7 +26,7 @@
       <div class="container">
         <span class="eyebrow">市場情報</span>
         <h1>市場相場</h1>
-        <p>公式ショップ（MoroMenuShop）の現在価格と価格推移です。価格はゲーム内の公式ショップと同じ値を表示します。</p>
+        <p>公式ショップとプレイヤー市場の現在価格と価格推移です。ゲーム内の価格を自動で反映します。実際の支払額・受取額が表示と異なる場合については「価格の見方」をご覧ください。</p>
       </div>
     </section>
 
@@ -39,17 +39,12 @@
         </div>
       </div>
 
-      <section aria-labelledby="demand-title" id="demand-section" hidden>
-        <div class="section-head" style="margin-bottom:14px"><h2 id="demand-title">特需情報</h2></div>
-        <div class="demand-grid" id="demands"></div>
-      </section>
-
       <div class="section-head" style="margin-bottom:14px"><h2>価格一覧</h2></div>
       <div class="toolbar">
         <div class="grow search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <label for="q" class="visually-hidden">アイテム検索</label>
-          <input class="input" id="q" type="search" placeholder="アイテム名で検索（例：小麦）" autocomplete="off">
+          <input class="input" id="q" type="search" placeholder="アイテム名・英語名で検索（例：小麦、wheat）" autocomplete="off">
         </div>
         <div>
           <label for="cat" class="visually-hidden">カテゴリ</label>
@@ -70,6 +65,7 @@
         </div>
       </div>
       <p class="meta-line" id="market-meta"></p>
+      <details class="price-help" id="market-help" hidden></details>
       <div id="market-list"><p class="loading">読み込み中…</p></div>
     </div>
   </main>

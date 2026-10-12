@@ -28,7 +28,7 @@
     box.innerHTML = '<div class="grid grid-3">' + list.map(function (m) {
       var rows = [
         [m.mayorTitle || "首長", m.mayor],
-        [state.live ? "住民" : "人口", U.isNum(m.population) ? U.num(m.population) + "人" : ""],
+        ["住民数", U.isNum(m.population) ? U.num(m.population) + "人" : ""],
         ["税率", U.isNum(m.taxRate) ? U.num(m.taxRate * 100, 1) + "%" : ""],
         ["設立日", m.foundedAt ? U.date(m.foundedAt) : ""]
       ].filter(function (r) { return r[1]; });

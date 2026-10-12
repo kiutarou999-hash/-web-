@@ -57,16 +57,6 @@
     return ((p.buy - base.buy) / base.buy) * 100;
   }
 
-  function activeDemands() {
-    var now = Date.now();
-    return (state.market.specialDemands || []).filter(function (d) {
-      if (d.worldGroup && d.worldGroup !== state.wg) return false;
-      if (d.start && +new Date(d.start) > now) return false;
-      if (d.end && +new Date(d.end) < now) return false;
-      return true;
-    });
-  }
-
   function itemById(id) {
     return (state.market.items || []).filter(function (i) { return i.id === id; })[0];
   }
@@ -102,24 +92,6 @@
     sel.parentNode.hidden = cats.length === 0;
   }
 
-  function renderDemands() {
-    var list = activeDemands();
-    var sec = document.getElementById("demand-section");
-    sec.hidden = list.length === 0;
-    document.getElementById("demands").innerHTML = list.map(function (d) {
-      var item = itemById(d.itemId) || { name: d.itemName || d.itemId };
-      var period = (d.start ? U.date(d.start, true) : "") + " 〜 " + (d.end ? U.date(d.end, true) : "未定");
-      return '<article class="card demand-card">' +
-        '<div class="item-cell">' + iconHtml(item) +
-        '<div style="flex:1"><span class="item-name">' + U.esc(item.name) + "</span>" +
-        '<span class="item-sub">' + U.esc(period) + "</span></div>" +
-        (U.isNum(d.multiplier) ? '<span class="mult">×' + U.num(d.multiplier) + "</span>" : "") +
-        "</div>" +
-        (d.note ? "<p>" + U.esc(d.note) + "</p>" : "") +
-        "</article>";
-    }).join("");
-  }
-
   function filteredItems() {
     var q = U.normalize(state.q);
     var items = (state.market.items || []).filter(function (i) {
@@ -151,8 +123,6 @@
   function renderList() {
     var box = document.getElementById("market-list");
     var rows = filteredItems();
-    var demandIds = {};
-    activeDemands().forEach(function (d) { demandIds[d.itemId] = d; });
 
     if (!rows.length) {
       box.innerHTML = '<div class="empty"><strong>該当するアイテムがありません</strong>検索条件を変えてお試しください。</div>';
@@ -163,11 +133,10 @@
     box.innerHTML = '<div class="table-wrap"><table class="data-table responsive">' +
       "<thead><tr><th>アイテム</th><th class=\"num\">購入価格</th><th class=\"num\">売却価格</th><th class=\"num\">変動率(24h)</th></tr></thead><tbody>" +
       rows.map(function (r) {
-        var i = r.item, d = demandIds[i.id];
+        var i = r.item;
         return '<tr class="is-link" tabindex="0" data-item="' + U.esc(i.id) + '">' +
           '<td class="cell-main"><div class="item-cell">' + iconHtml(i) +
           '<div><span class="item-name">' + U.esc(i.name) + "</span>" +
-          (d ? ' <span class="badge badge-gold">特需' + (U.isNum(d.multiplier) ? " ×" + U.num(d.multiplier) : "") + "</span>" : "") +
           '<span class="item-sub">' + U.esc(i.category || i.id) + "</span></div></div></td>" +
           '<td class="num" data-label="購入価格">' + U.money(r.buy) + "</td>" +
           '<td class="num" data-label="売却価格">' + U.money(r.sell) + "</td>" +
@@ -183,22 +152,42 @@
     return (state.market.worldGroups || []).filter(function (g) { return g.id === state.wg; })[0] || {};
   }
 
+  /*
+   * 価格の見方（MoroMenuShop の実装に基づく説明）
+   *  公式ショップ: ShopEntry の現在価格。購入されるたびに購入価格が上がり、毎月はじめ（日本時間）に基準価格へ戻る。
+   *    売却は即時の買い取りではなく、その価格を基準にプレイヤー市場へ出品する処理（MenuService → SellService）。
+   *    1日の購入額が上限を超えたプレイヤーは購入2倍（OfficialShopDailyLimitService。売却額は記録されないため売却半額は発生しない）。
+   *  プレイヤー市場: data-group ごとに、最も古い（＝最初に表示される）出品の現在価格。購入時は手数料が加わり、送料は場所で変わる。
+   */
+  var HELP = {
+    official: [
+      "購入価格：公式ショップで1個買うときの現在の価格です。購入されるたびに上がり、毎月はじめ（日本時間）に元の価格へ戻ります。",
+      "売却価格：公式ショップの売却画面に表示される1個あたりの価格です。",
+      "公式ショップで売却したアイテムは、この価格を基準にプレイヤー市場へ出品され、ほかのプレイヤーが購入したときに代金が入ります。受取額は出品先の市場の状況によって変わります。",
+      "1日の公式ショップでの購入額が上限（プレイヤーごとに異なります）を超えると、その日の購入価格は2倍になります（ネザライトインゴットを除く）。表示しているのは上限を超えていないときの価格です。"
+    ],
+    market: [
+      "購入価格：いちばん安い出品を1個買うときの価格です（手数料込み）。送料は購入する場所によって別にかかります。",
+      "売却価格：その出品が売れたときに、出品者が1個あたりに受け取る金額です。",
+      "価格は出品数と購入数に応じて変わります。（　）内のワールドで共通の市場です。"
+    ]
+  };
+
   function renderMeta() {
     var m = state.market;
     var count = (m.items || []).filter(priceOf).length;
-    var help = "購入価格＝ショップで買う値段、売却価格＝ショップに売る値段";
-    if (m.live && currentGroup().kind === "official") {
-      help = "購入価格＝公式ショップで買う値段、売却価格＝公式ショップで売ったときの出品価格（市場で売れた時に入金）。1日の取引上限を超えたプレイヤーは購入2倍・売却半額になります";
-    } else if (m.live) {
-      help = "購入価格＝最安の出品を買うときの1個あたりの値段（手数料込み・送料は場所により別途）、売却価格＝出品者の受取額。表示中のワールドグループで共通の市場です";
-    }
     document.getElementById("market-meta").textContent =
-      "最終更新：" + (m.live ? L.time(+new Date(m.updatedAt)) : U.date(m.updatedAt, true)) + "　／　掲載 " + count + " 品目　／　" + help;
+      "最終更新：" + (m.live ? L.time(+new Date(m.updatedAt)) : U.date(m.updatedAt, true)) + "　／　掲載 " + count + " 品目";
+    var help = document.getElementById("market-help");
+    var lines = m.live ? HELP[currentGroup().kind] : null;
+    help.hidden = !lines;
+    if (lines) {
+      help.innerHTML = '<summary>価格の見方</summary><ul>' + lines.map(function (t) { return "<li>" + U.esc(t) + "</li>"; }).join("") + "</ul>";
+    }
   }
 
   function renderAll() {
     renderTabs();
-    renderDemands();
     renderMeta();
     renderList();
   }
@@ -229,7 +218,7 @@
       '<div class="stat"><div class="k">売却価格</div><div class="v">' + U.money(p.sell) + "</div></div>" +
       '<div class="stat"><div class="k">変動率(24h)</div><div class="v">' + U.change(change24h(item)) + "</div></div>" +
       (U.isNum(p.available) ? '<div class="stat"><div class="k">出品数</div><div class="v">' + U.num(p.available) + "<small>個</small></div></div>" : "") +
-      '<div class="stat"><div class="k">' + (state.market.live ? "対象" : "ワールドグループ") + '</div><div class="v" style="font-size:1rem">' + U.esc(wgName) + "</div></div>";
+      '<div class="stat"><div class="k">' + (state.market.live ? "市場" : "ワールドグループ") + '</div><div class="v" style="font-size:1rem">' + U.esc(wgName) + "</div></div>";
   }
 
   function renderChart() {
@@ -383,7 +372,7 @@
       var saved = null;
       try { saved = localStorage.getItem("inari.market.wg"); } catch (err) { /* 無視 */ }
       state.wg = groups.some(function (g) { return g.id === saved; }) ? saved : (groups[0] && groups[0].id);
-      if (state.market.sample) document.getElementById("market-notice").innerHTML = U.sampleNotice("価格・特需情報");
+      if (state.market.sample) document.getElementById("market-notice").innerHTML = U.sampleNotice("価格情報");
       renderCategories();
       renderAll();
     }).catch(function (e) {

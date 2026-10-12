@@ -17,7 +17,7 @@
     { key: "no", label: "順位" },
     { key: "name", label: "会社名" },
     { key: "rank", label: "ランク" },
-    { key: "sales", label: "売上", num: true },
+    { key: "sales", label: "会社売上", num: true },
     { key: "employees", label: "社員数", num: true },
     { key: "stock", label: "株価", num: true },
     { key: "listed", label: "上場状況" }
@@ -79,7 +79,7 @@
           '<td class="cell-main" data-label="会社名"><a href="' + U.esc(C.detailUrl(c)) + '" class="item-name">' + U.esc(c.name) + "</a>" +
           (c.industry ? '<span class="item-sub">' + U.esc(c.industry) + "</span>" : "") + "</td>" +
           '<td data-label="ランク"><span class="badge badge-gold">' + U.esc(c.rank != null && c.rank !== "" ? c.rank : "—") + "</span></td>" +
-          '<td class="num" data-label="売上">' + U.money(c.totalSales) + "</td>" +
+          '<td class="num" data-label="会社売上">' + U.money(c.totalSales) + "</td>" +
           '<td class="num" data-label="社員数">' + (U.isNum(c.employees) ? "<span>" + U.num(c.employees) + "<small>人</small></span>" : "—") + "</td>" +
           '<td class="num" data-label="株価">' + (c.listed ? U.money(c.stockPrice) : "—") + "</td>" +
           '<td data-label="上場状況">' + C.listedBadge(c) + "</td>" +
@@ -124,7 +124,9 @@
         document.getElementById("companies-meta").textContent =
           "最終更新：" + (info.live ? window.InariLive.time(+new Date(d.updatedAt)) : U.date(d.updatedAt, true)) +
           "　／　登録 " + d.companies.length + " 社　／　" +
-          (info.live ? "順位はゲーム内の会社ランキング（自動販売機の売上、社員による購入を除く）と同じです" : "順位は累計売上順");
+          (info.live
+            ? "順位はゲーム内の会社ランキングと同じです　／　会社売上＝会社の自動販売機で社外のプレイヤーに売れた金額の合計　／　社員数に社長は含みません"
+            : "順位は累計売上順");
         render();
       }
     });

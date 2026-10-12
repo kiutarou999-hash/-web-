@@ -36,13 +36,13 @@
 
     // 値は表示用 HTML（文字列はすべてエスケープ済み）
     var rows = [
-      ["代表者", c.president ? U.esc(c.president) + (L ? L.editionBadge(c.presidentEdition) : "") : ""],
+      ["社長", c.president ? U.esc(c.president) + (L ? L.editionBadge(c.presidentEdition) : "") : ""],
       ["設立日", c.foundedAt ? U.esc(U.date(c.foundedAt)) : ""],
       ["業種", U.esc(c.industry || "")],
       ["本社所在地", U.esc(c.headquarters || "")]
     ];
     if (current.live) {
-      rows.push(["ランク判定売上", U.money(c.rankRevenue)]);
+      rows.push(["累計売上（ランク判定）", U.money(c.rankRevenue)]);
       rows.push(["次のランク", c.nextRank
         ? "Rank " + U.esc(c.nextRank.rank) + "（売上 " + U.esc(U.moneyText(c.nextRank.revenue)) + "・社員 " + U.num(c.nextRank.employees) + "人）"
         : "最高ランクです"]);
@@ -65,10 +65,14 @@
     html +=
       '<div class="stat-row">' +
       stat("順位", rankText) +
-      stat(current.live ? "売上（ランキング）" : "累計売上", U.money(c.totalSales)) +
+      stat(current.live ? "会社売上" : "累計売上", U.money(c.totalSales)) +
       stat("社員数", U.isNum(c.employees) ? U.num(c.employees) + "<small>人" + (current.live ? "（社長を除く）" : "") + "</small>" : "—") +
       stat("株価", stock) +
       "</div>" +
+      (current.live
+        ? '<p class="meta-line" style="margin-top:-8px">会社売上：ゲーム内の会社ランキングに使われる金額です（会社の自動販売機で社外のプレイヤーに売れた金額の合計。社長の資産が凍結されている間の売上は含みません）。' +
+          "累計売上（ランク判定）：会社ランクの昇格条件に使われる金額です（社員による購入は含みません）。記録の仕方が異なるため、2つの金額は一致しないことがあります。</p>"
+        : "") +
       '<div class="two-col">' +
       "<div>" +
       (c.description ? '<div class="card card-body" style="margin-bottom:20px"><h2 style="font-size:1.15rem">会社紹介</h2><p style="margin:0;white-space:pre-wrap">' + U.esc(c.description) + "</p></div>" : "") +

@@ -143,7 +143,7 @@
       '<div class="notice" role="note"><span class="notice-icon">!</span><div>' +
       "<strong>表示確認用のサンプルデータです。</strong>" +
       U.esc(what) +
-      "はゲーム内の実際の値ではありません。実データに差し替えるとこの表示は消えます。</div></div>"
+      "はゲーム内の実際の値ではありません。</div></div>"
     );
   };
 
