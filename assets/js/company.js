@@ -116,7 +116,7 @@
 
   function draw(c, points, from, to) {
     U.lineChart(document.getElementById("stock-chart"), {
-      series: [{ label: "株価", color: "#1e4d36", points: points }],
+      series: [{ label: "株価", color: "#a94e42", points: points }],
       from: from,
       to: to,
       ariaLabel: c.name + " の株価推移",

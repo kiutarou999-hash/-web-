@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" class="has-photo-header">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,34 +33,33 @@
         <source type="image/webp" srcset="assets/img/hero-hub-960.webp 960w, assets/img/hero-hub-1600.webp 1600w" sizes="100vw">
         <img src="assets/img/hero-hub-1600.jpg" width="1600" height="900" alt="稲荷クラフトのHub。桜並木の参道の先に朱色の鳥居と社殿が建っている" fetchpriority="high" decoding="async">
       </picture>
-      <div class="container">
+      <div class="container hero-grid">
         <div class="hero-text">
           <p class="hero-kicker">サバイバル × 経済 × 会社 × 自治体</p>
           <h1 id="hero-title">稲荷クラフト</h1>
           <p class="hero-lead" id="hero-tagline">プレイヤー同士でアイテムを売買し、会社経営や街づくりを楽しめるMinecraftサーバーです。</p>
           <div class="hero-actions">
-            <a class="btn btn-gold btn-lg" href="join.html">参加方法を見る</a>
+            <a class="btn btn-primary btn-lg" href="join.html">参加方法を見る <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn btn-outline btn-lg" id="hero-discord" href="#" target="_blank" rel="noopener">Discordに参加する</a>
             <a class="btn btn-outline btn-lg" id="hero-map" href="#" target="_blank" rel="noopener" hidden>ワールドの地図を見る</a>
           </div>
         </div>
+
+        <aside class="status-card" aria-labelledby="status-title">
+          <h2 id="status-title">サーバー状況</h2>
+          <p class="status-sub">Java版・統合版の両方から参加できます。</p>
+          <dl class="status-panel">
+            <div class="status-row"><dt class="label">状態</dt><dd class="value" id="st-online"><span class="status-dot"></span>確認中…</dd></div>
+            <div class="status-row"><dt class="label">オンライン人数</dt><dd class="value" id="st-players">—</dd></div>
+            <div class="status-row"><dt class="label">対応バージョン</dt><dd class="value" id="st-version">準備中</dd></div>
+            <div class="status-row"><dt class="label">Java版アドレス</dt><dd class="value" id="st-java">準備中</dd></div>
+            <div class="status-row"><dt class="label">統合版（フレンド参加）</dt><dd class="value" id="st-friend">準備中</dd></div>
+            <div class="status-row"><dt class="label">統合版（直接接続）</dt><dd class="value" id="st-bedrock">準備中</dd></div>
+          </dl>
+          <p class="status-note"><a href="join.html">参加方法の詳細 →</a></p>
+        </aside>
       </div>
       <p class="hero-credit">写真：サーバーのHub（ロビー）</p>
-    </section>
-
-    <section class="server-strip" aria-labelledby="status-title">
-      <div class="container">
-        <h2 class="server-strip-title" id="status-title">サーバー状況<small>Java版・統合版の両方から参加できます。</small></h2>
-        <dl class="status-panel">
-          <div class="status-row"><dt class="label">状態</dt><dd class="value" id="st-online"><span class="status-dot"></span>確認中…</dd></div>
-          <div class="status-row"><dt class="label">オンライン人数</dt><dd class="value" id="st-players">—</dd></div>
-          <div class="status-row"><dt class="label">対応バージョン</dt><dd class="value" id="st-version">準備中</dd></div>
-          <div class="status-row"><dt class="label">Java版アドレス</dt><dd class="value" id="st-java">準備中</dd></div>
-          <div class="status-row"><dt class="label">統合版（フレンド参加）</dt><dd class="value" id="st-friend">準備中</dd></div>
-          <div class="status-row"><dt class="label">統合版（直接接続）</dt><dd class="value" id="st-bedrock">準備中</dd></div>
-        </dl>
-        <p class="status-note"><a href="join.html">参加方法の詳細 →</a></p>
-      </div>
     </section>
 
     <section class="section" aria-labelledby="features-title">
@@ -150,7 +149,7 @@
             <p>Java版・統合版それぞれの接続手順を、参加方法のページで確認できます。</p>
           </div>
           <div class="hero-actions">
-            <a class="btn btn-gold" href="join.html">参加方法を見る</a>
+            <a class="btn btn-primary" href="join.html">参加方法を見る <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn btn-outline" id="cta-discord" href="#" target="_blank" rel="noopener">Discordに参加する</a>
           </div>
         </div>

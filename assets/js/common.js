@@ -109,13 +109,36 @@
     return s ? Array.from(s)[0] : "?";
   };
 
+  var CHECK_ICON = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5"/></svg>';
+
+  /** 読み上げ用の通知（コピー結果など） */
+  function announce(msg) {
+    var live = document.getElementById("sr-live");
+    if (!live) {
+      live = document.createElement("div");
+      live.id = "sr-live";
+      live.className = "visually-hidden";
+      live.setAttribute("aria-live", "polite");
+      document.body.appendChild(live);
+    }
+    live.textContent = "";
+    setTimeout(function () { live.textContent = msg; }, 30);
+  }
+
+  /** コピー。成功したときだけ「コピーしました」に切り替え、1.8秒後に元へ戻します。 */
   U.copy = function (text, btn) {
-    var show = function (msg) {
-      if (!btn) return;
-      if (!btn.dataset.label) btn.dataset.label = btn.textContent;
-      btn.textContent = msg;
-      clearTimeout(btn._t);
-      btn._t = setTimeout(function () { btn.textContent = btn.dataset.label; }, 1600);
+    var success = function () {
+      if (btn) {
+        if (!btn.dataset.label) btn.dataset.label = btn.innerHTML;
+        btn.innerHTML = CHECK_ICON + "コピーしました";
+        btn.classList.add("is-copied");
+        clearTimeout(btn._t);
+        btn._t = setTimeout(function () {
+          btn.innerHTML = btn.dataset.label;
+          btn.classList.remove("is-copied");
+        }, 1800);
+      }
+      announce("コピーしました：" + text);
     };
     var legacy = function () {
       var ta = document.createElement("textarea");
@@ -128,14 +151,36 @@
       var ok = false;
       try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
       document.body.removeChild(ta);
-      if (ok) show("コピーしました");
-      else window.prompt("以下をコピーしてください", text);
+      if (ok) success();
+      else window.prompt("自動でコピーできませんでした。以下を選択してコピーしてください", text);
     };
     if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(function () { show("コピーしました"); }, legacy);
+      navigator.clipboard.writeText(text).then(success, legacy);
     } else {
       legacy();
     }
+  };
+
+  /**
+   * 内容が変わったときだけ書き換えます。リアルタイム更新で同じ表を作り直して
+   * スクロール位置やフォーカスを失ったり、ちらついたりするのを防ぎます。
+   */
+  /** innerHTML への代入を U.setHTML に置き換える小さな窓口（一覧の描画用） */
+  U.htmlSink = function (el) {
+    return {
+      get innerHTML() { return el ? el.innerHTML : ""; },
+      set innerHTML(html) { U.setHTML(el, html); }
+    };
+  };
+
+  U.setHTML = function (el, html) {
+    if (!el) return false;
+    // 他の処理（エラー表示など）で中身が置き換わっていたら、同じ内容でも書き直す
+    if (el._html === html && el._htmlFirst === el.firstChild) return false;
+    el.innerHTML = html;
+    el._html = html;
+    el._htmlFirst = el.firstChild;
+    return true;
   };
 
   U.sampleNotice = function (what) {
@@ -199,10 +244,34 @@
       "</div>";
     var btn = el.querySelector(".nav-toggle");
     var nav = el.querySelector(".global-nav");
-    btn.addEventListener("click", function () {
-      var open = nav.classList.toggle("is-open");
+    function setOpen(open) {
+      nav.classList.toggle("is-open", open);
       btn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    btn.addEventListener("click", function () { setOpen(!nav.classList.contains("is-open")); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && nav.classList.contains("is-open")) { setOpen(false); btn.focus(); }
     });
+    document.addEventListener("click", function (e) {
+      if (nav.classList.contains("is-open") && !el.contains(e.target)) setOpen(false);
+    });
+    nav.addEventListener("click", function (e) { if (e.target.closest("a")) setOpen(false); });
+
+    // トップでは写真の上でヘッダーを半透明にし、写真を過ぎたら不透明にする
+    if (document.documentElement.classList.contains("has-photo-header")) {
+      var hero = document.querySelector(".hero");
+      var ticking = false;
+      var update = function () {
+        ticking = false;
+        var limit = hero ? hero.offsetHeight - el.offsetHeight - 40 : 40;
+        el.classList.toggle("is-solid", window.scrollY > limit || nav.classList.contains("is-open"));
+      };
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      btn.addEventListener("click", update);
+      update();
+    }
   }
 
   function renderFooter() {
@@ -229,22 +298,37 @@
       "</div>";
   }
 
-  /* ---------- 控えめなフェードイン ---------- */
+  /*
+   * スクロール時のフェードイン（初回だけ）。
+   * 画面外にある要素だけを、監視の準備ができてから隠します。JS が動かない・失敗した場合や
+   * 「視差効果を減らす」設定では何も隠さないので、内容は必ず表示されます。
+   * 表の行など大量の要素は対象にしません（.reveal と見出しだけ）。
+   */
   U.observeReveal = function (root) {
-    var items = (root || document).querySelectorAll(".reveal:not(.is-visible)");
-    if (!("IntersectionObserver" in window)) {
-      items.forEach(function (e) { e.classList.add("is-visible"); });
-      return;
-    }
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) return;
+    var items = Array.prototype.slice.call((root || document).querySelectorAll(".reveal, main .section .section-head"))
+      .filter(function (e) { return !e.dataset.revealed && !e.closest(".hero"); });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
-        if (en.isIntersecting) {
-          en.target.classList.add("is-visible");
-          io.unobserve(en.target);
-        }
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        io.unobserve(el);
+        el.classList.add("reveal-in");
+        el.classList.remove("reveal-wait");
       });
-    }, { rootMargin: "0px 0px -40px 0px" });
-    items.forEach(function (e) { io.observe(e); });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+    var viewH = window.innerHeight || document.documentElement.clientHeight;
+    items.forEach(function (el) {
+      el.dataset.revealed = "1";
+      if (el.getBoundingClientRect().top < viewH) return; // 最初から見えている要素は動かさない
+      // 同じ並びのカードは 60ms ずつ遅らせる（最大 240ms）
+      var siblings = el.parentElement ? Array.prototype.filter.call(el.parentElement.children, function (c) { return c.classList.contains("reveal"); }) : [];
+      var i = Math.max(0, siblings.indexOf(el));
+      el.style.setProperty("--reveal-delay", Math.min(i, 4) * 60 + "ms");
+      el.classList.add("reveal-wait");
+      io.observe(el);
+    });
   };
 
   window.Inari = U;

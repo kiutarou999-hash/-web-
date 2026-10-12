@@ -6,7 +6,7 @@
   var L = window.InariLive;
 
   var RANGES = { "24h": 864e5, "7d": 7 * 864e5, "30d": 30 * 864e5 };
-  var COLORS = { buy: "#1e4d36", sell: "#b8862b" };
+  var COLORS = { buy: "#a94e42", sell: "#3f6e8c" }; // グラフの系列色（朱と、区別用の落ち着いた青）
 
   var state = {
     market: null,
@@ -150,7 +150,7 @@
   }
 
   function renderList() {
-    var box = document.getElementById("market-list");
+    var box = U.htmlSink(document.getElementById("market-list"));
     var rows = filteredItems();
 
     if (!rows.length) {

@@ -62,7 +62,7 @@
   }
 
   function render() {
-    var box = document.getElementById("companies-list");
+    var box = U.htmlSink(document.getElementById("companies-list"));
     var list = rows();
     if (!state.data.companies.length) {
       box.innerHTML = '<div class="empty"><strong>まだ会社が登録されていません</strong>会社データが追加されるとここに表示されます。</div>';

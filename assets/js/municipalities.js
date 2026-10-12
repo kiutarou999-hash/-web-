@@ -7,7 +7,7 @@
   var state = { list: [], dissolved: [], live: false, q: "", sort: "population" };
 
   function render() {
-    var box = document.getElementById("muni-list");
+    var box = U.htmlSink(document.getElementById("muni-list"));
     if (!state.list.length) {
       box.innerHTML = '<div class="empty"><strong>まだ自治体が登録されていません</strong>自治体データが追加されるとここに表示されます。</div>';
       return;
