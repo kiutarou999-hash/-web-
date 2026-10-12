@@ -116,16 +116,8 @@ async function ingest(request, env) {
   if (!(await verifySignature(env.INGEST_SECRET, timestampText, bytes, signature))) {
     return json({ error: "bad signature" }, 401);
   }
-  let message;
-  try {
-    message = JSON.parse(new TextDecoder().decode(bytes));
-  } catch {
-    return json({ error: "invalid json" }, 400);
-  }
-  if (!message || message.sentAt !== timestamp) {
-    return json({ error: "timestamp mismatch" }, 400);
-  }
-  return hub(env).fetch("https://hub/ingest", { method: "POST", body: JSON.stringify(message) });
+  // The body is parsed once, inside the Durable Object, to stay well within the Worker's CPU limit.
+  return hub(env).fetch("https://hub/ingest", { method: "POST", body: bytes, headers: { "X-Moro-Timestamp": timestampText } });
 }
 
 export async function verifySignature(secret, timestampText, bodyBytes, header) {
@@ -141,7 +133,7 @@ export async function verifySignature(secret, timestampText, bodyBytes, header) 
   return crypto.subtle.verify("HMAC", key, expected, signed);
 }
 
-function corsHeaders(request, env) {
+export function corsHeaders(request, env) {
   const allowed = String(env.ALLOWED_ORIGINS || "*").split(",").map((s) => s.trim()).filter(Boolean);
   const origin = request.headers.get("Origin") || "";
   const headers = {
@@ -208,13 +200,24 @@ export class LiveHub {
 
   async fetch(request) {
     const url = new URL(request.url);
-    if (url.pathname === "/ingest") return this.ingest(await request.json());
+    if (url.pathname === "/ingest") {
+      let message;
+      try {
+        message = JSON.parse(await request.text());
+      } catch {
+        return json({ error: "invalid json" }, 400);
+      }
+      if (!message || message.sentAt !== Number(request.headers.get("X-Moro-Timestamp"))) {
+        return json({ error: "timestamp mismatch" }, 400);
+      }
+      return this.ingest(message);
+    }
     if (url.pathname === "/snapshot") return this.snapshot();
     if (url.pathname === "/history") return this.history(url.searchParams.get("series"), url.searchParams.get("range"));
     return json({ error: "not found" }, 404);
   }
 
-  ingest(message) {
+  async ingest(message) {
     const now = Date.now();
     const lastSentAt = Number(this.meta.lastSentAt || 0);
     if (!(message.sentAt > lastSentAt)) {
@@ -244,7 +247,7 @@ export class LiveHub {
       return json({ error: "unknown kind" }, 400);
     }
     this.publicBody = null;
-    this.scheduleMaintenance();
+    await this.scheduleMaintenance();
     return json({ ok: true });
   }
 
@@ -343,10 +346,10 @@ export class LiveHub {
     return json({ series, range, serverTime: now, points });
   }
 
-  scheduleMaintenance() {
-    this.ctx.storage.getAlarm().then((alarm) => {
-      if (alarm === null) return this.ctx.storage.setAlarm(Date.now() + HOUR);
-    });
+  async scheduleMaintenance() {
+    if ((await this.ctx.storage.getAlarm()) === null) {
+      await this.ctx.storage.setAlarm(Date.now() + HOUR);
+    }
   }
 
   /** Thins old history: hourly points after 31 days, nothing after 400 days. */

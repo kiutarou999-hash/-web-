@@ -21,25 +21,73 @@ MoroMenuShop ──(HTTPS POST・HMAC 署名)──▶ この Worker ──(GET�
 
 ## はじめて公開する手順
 
-1. Cloudflare の無料アカウントを作ります（クレジットカードは不要です）。
-2. このフォルダで次を実行します（Node.js 18 以上が必要）。
-   ```sh
-   cd worker
-   npm install
-   npx wrangler login
-   npx wrangler secret put INGEST_SECRET   # 32文字以上のランダム文字列を入力
-   npx wrangler deploy
+公開作業は `npm run release` でまとめて行います。このコマンドは次を順に実行します。
+
+1. API トークンを確認する
+2. workers.dev のサブドメインを用意する（未作成なら `inari-craft` などで作成）
+3. デプロイする
+4. 秘密鍵 `INGEST_SECRET` を登録する
+5. 動作確認をする
+
+### 1. API トークンと秘密鍵を用意する（運営者の作業）
+
+1. Cloudflare ダッシュボードで、右上のアイコン → **My Profile** → **API Tokens** → **Create Token** を開きます。
+   - テンプレート **Edit Cloudflare Workers** を選びます。
+   - Account Resources: 自分のアカウント
+   - Zone Resources: All zones（ゾーンがなくても可）
+   - 作成されたトークンは一度しか表示されません。
+2. サーバーと Worker で共有する秘密の文字列を、自分の PC で作ります（PowerShell の例）。
+   ```powershell
+   $b = New-Object byte[] 48; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)
    ```
-   表示された `https://inari-craft-live.<アカウント>.workers.dev` が配信 URL です。
-3. サーバーの `plugins/MoroMenuShop/config.yml` に、次を設定します。
-   - `web-sync.enabled: true`
-   - `endpoint`: 配信 URL
-   - `secret`: 手順 2 と同じ文字列
-   
-   設定したらサーバーを再起動します。詳しくは MoroMenuShop の `docs/web-sync.md` を参照してください。
-4. サイトの `assets/js/config.js` の `liveApi` に配信 URL を書いて、GitHub に反映します。
-   `liveApi` は公開して問題ない読み取り専用の URL です。秘密の文字列は書かないでください。
-5. 必要なら、`wrangler.toml` の `ALLOWED_ORIGINS` をサイトの URL（例: `https://kiutarou999-hash.github.io`）に絞ります。
+   この文字列は、サーバーの `plugins/MoroMenuShop/config.yml` の `web-sync.secret` にも書きます。
+   公開リポジトリ、サイト、チャット、Discord には貼らないでください。
+
+### 2. 公開する
+
+次の環境変数を設定してから実行します。
+
+- `CLOUDFLARE_API_TOKEN`: 1-1 のトークン
+- `MORO_INGEST_SECRET`: 1-2 の文字列
+- `CLOUDFLARE_ACCOUNT_ID`: 任意。トークンで複数のアカウントを扱える場合だけ必要です。
+
+Claude Code のクラウド環境で実行する場合は、環境設定の Secrets（または Environment variables）に登録してください。
+
+```sh
+cd worker
+npm install
+npm run release -- --write-site-config   # 公開して、サイトの config.js の liveApi も書き換える
+```
+
+最後に表示される `https://inari-craft-live.<サブドメイン>.workers.dev` が配信 URL です。
+`--write-site-config` で書き換えた `assets/js/config.js` を commit / push すると、サイトがリアルタイム表示になります。
+
+### 3. サーバーを設定する（運営者の作業）
+
+`plugins/MoroMenuShop/config.yml` に次を設定して、サーバーを再起動します。
+
+```yaml
+web-sync:
+  enabled: true
+  endpoint: "https://inari-craft-live.<サブドメイン>.workers.dev"
+  secret: "<1-2 で作った文字列>"
+```
+
+`/websync` に「秒前に成功」と表示されれば完了です。詳しくは MoroMenuShop の `docs/web-sync.md` を参照してください。
+
+### 自分の PC から公開する場合
+
+`npx wrangler login`（ブラウザでログイン）→ `npx wrangler deploy` → `npx wrangler secret put INGEST_SECRET` の順に実行しても公開できます。
+公開後の確認は、次のコマンドで行えます。
+
+```sh
+MORO_INGEST_SECRET=... npm run release -- --verify-only --base=<配信URL>
+```
+
+### 読み込みを許可するサイト
+
+`wrangler.toml` の `ALLOWED_ORIGINS` で、ブラウザからデータを読めるサイトを `https://kiutarou999-hash.github.io` に限定しています（他サイトの埋め込みで無料枠を消費されないため）。
+独自ドメインに移行したら、そのオリジンを追加して再デプロイしてください。
 
 ## 無料枠の目安
 

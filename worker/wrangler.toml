@@ -5,8 +5,9 @@ compatibility_date = "2026-09-01"
 workers_dev = true
 
 [vars]
-# サイトの公開元（カンマ区切り）。"*" はどこからでも読み取り可（公開データのみなので既定は "*"）。
-ALLOWED_ORIGINS = "*"
+# データを読み込めるサイトの公開元（カンマ区切り）。他サイトからの埋め込みで無料枠を消費されないよう、公式サイトに限定しています。
+# 独自ドメインに移行したときは、そのオリジン（例: "https://inari-craft.jp"）を追加してください。"*" にすると制限なし。
+ALLOWED_ORIGINS = "https://kiutarou999-hash.github.io"
 
 [[durable_objects.bindings]]
 name = "LIVE_HUB"

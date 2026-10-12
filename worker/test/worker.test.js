@@ -8,7 +8,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { seriesValues, verifySignature } from "../src/index.js";
+import { corsHeaders, seriesValues, verifySignature } from "../src/index.js";
 
 const SECRET = "test-secret-0123456789abcdef0123456789";
 const PORT = 18787 + Math.floor(Math.random() * 1000);
@@ -54,7 +54,7 @@ function snapshot(wheatBuy = 12, sharePrice = 150) {
 before(async () => {
   persist = mkdtempSync(join(tmpdir(), "inari-live-"));
   dev = spawn("npx", ["wrangler", "dev", "--port", String(PORT), "--ip", "127.0.0.1", "--persist-to", persist,
-    "--var", `INGEST_SECRET:${SECRET}`, "--var", "EDGE_CACHE_SECONDS:0", "--var", "OFFLINE_AFTER_SECONDS:3"],
+    "--var", `INGEST_SECRET:${SECRET}`, "--var", "EDGE_CACHE_SECONDS:0", "--var", "ALLOWED_ORIGINS:*", "--var", "OFFLINE_AFTER_SECONDS:3"],
   { cwd: root, detached: true, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, WRANGLER_SEND_METRICS: "false", CI: "1" } });
   let log = "";
   dev.stdout.on("data", (d) => { log += d; });
@@ -168,4 +168,13 @@ test("the Worker accepts exactly the signature format MoroMenuShop sends", async
   assert.equal(await verifySignature(SECRET, "1", body, header), true);
   assert.equal(await verifySignature(SECRET, "2", body, header), false);
   assert.equal(await verifySignature(SECRET, "1", body, header.toUpperCase()), false);
+});
+
+test("only the configured site origin may read the data from a browser", () => {
+  const env = { ALLOWED_ORIGINS: "https://kiutarou999-hash.github.io" };
+  const site = new Request("https://x/v1/snapshot", { headers: { Origin: "https://kiutarou999-hash.github.io" } });
+  const other = new Request("https://x/v1/snapshot", { headers: { Origin: "https://example.com" } });
+  assert.equal(corsHeaders(site, env)["Access-Control-Allow-Origin"], "https://kiutarou999-hash.github.io");
+  assert.equal(corsHeaders(other, env)["Access-Control-Allow-Origin"], undefined);
+  assert.equal(corsHeaders(other, { ALLOWED_ORIGINS: "*" })["Access-Control-Allow-Origin"], "*");
 });
