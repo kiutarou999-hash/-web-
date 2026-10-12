@@ -205,7 +205,7 @@ button, input, select { font: inherit; color: inherit; }
 .meta-line { font-size: .82rem; color: var(--ink-mute); margin-bottom: 12px; }
 
 /* ---------- Tables ---------- */
-.table-wrap { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.table-wrap { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow-x: auto; overflow-y: hidden; box-shadow: var(--shadow); }
 .data-table { width: 100%; border-collapse: collapse; font-size: .94rem; }
 .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; }
 .data-table thead th { background: var(--green-50); font-size: .8rem; color: var(--ink-soft); font-weight: 700; letter-spacing: .06em; white-space: nowrap; }
@@ -449,3 +449,6 @@ dialog.panel::backdrop { background: rgba(15, 42, 29, .55); }
 .territory-map rect.cell { fill: var(--green-600); fill-opacity: .55; stroke: var(--green-800); stroke-width: .06; }
 .territory-map circle.center { fill: var(--gold-500); stroke: var(--green-900); stroke-width: .12; }
 .dissolved-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; font-size: .92rem; color: var(--ink-soft); }
+/* プレイヤーが付けた長い名前（区切りのない英数字など）でも表やカードがはみ出さないように折り返す */
+.data-table td, .item-name, .muni-card h3, .company-head h1, .dl-grid dd, .breadcrumb span { overflow-wrap: anywhere; word-break: normal; }
+.data-table td.cell-main { min-width: 0; }

@@ -138,6 +138,8 @@
     (d.worldGroups || []).forEach(function (g) { wgName[g.id] = g.name; });
     var groups = [{ id: "official", name: "公式ショップ（全ワールド共通）", kind: "official" }];
     ((d.playerMarket || {}).dataGroups || []).forEach(function (g) {
+      // 出品が1件もない data-group（テスト用ワールドなど）はタブを出しません。
+      if (!(g.items || []).length) return;
       groups.push({
         id: "market:" + g.id,
         kind: "market",

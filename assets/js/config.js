@@ -48,7 +48,7 @@ window.SITE_CONFIG = {
   // 配信用 Worker の URL（例: "https://inari-craft-live.xxxx.workers.dev"）。
   // 設定すると、市場相場・会社・自治体・株価がゲーム内とほぼ同時（10〜20秒程度）に更新されます。
   // 空欄のままなら、従来どおり data/*.json を表示します。秘密の鍵はここに書かないでください（読み取り専用の URL だけです）。
-  liveApi: "",
+  liveApi: "https://inari-craft-live.kiutarou999.workers.dev",
   // 再取得の間隔（秒、10 以上）。ページを開いている間だけ取得します。
   livePollSeconds: 10,
 

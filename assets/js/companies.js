@@ -78,7 +78,7 @@
           '<td data-label="順位">' + C.rankNoHtml(c.rankNo) + "</td>" +
           '<td class="cell-main" data-label="会社名"><a href="' + U.esc(C.detailUrl(c)) + '" class="item-name">' + U.esc(c.name) + "</a>" +
           (c.industry ? '<span class="item-sub">' + U.esc(c.industry) + "</span>" : "") + "</td>" +
-          '<td data-label="ランク"><span class="badge badge-gold">' + (U.isNum(c.rank) ? "Rank " : "") + U.esc(c.rank != null && c.rank !== "" ? c.rank : "—") + "</span></td>" +
+          '<td data-label="ランク"><span class="badge badge-gold">' + U.esc(c.rank != null && c.rank !== "" ? c.rank : "—") + "</span></td>" +
           '<td class="num" data-label="売上">' + U.money(c.totalSales) + "</td>" +
           '<td class="num" data-label="社員数">' + (U.isNum(c.employees) ? "<span>" + U.num(c.employees) + "<small>人</small></span>" : "—") + "</td>" +
           '<td class="num" data-label="株価">' + (c.listed ? U.money(c.stockPrice) : "—") + "</td>" +
