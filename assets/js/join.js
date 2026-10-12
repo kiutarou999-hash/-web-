@@ -24,6 +24,9 @@
     addrBox("friend-name", CFG.bedrockFriendName);
     addrBox("bedrock-addr", CFG.bedrockAddress);
     addrBox("bedrock-port", String(CFG.bedrockPort || 19132));
+    addrBox("friend-name-summary", CFG.bedrockFriendName);
+    addrBox("bedrock-addr-summary", CFG.bedrockAddress);
+    addrBox("bedrock-port-summary", String(CFG.bedrockPort || 19132));
     U.applyDiscord(document.getElementById("join-discord"));
     document.addEventListener("click", function (e) {
       var b = e.target.closest("[data-copy]");

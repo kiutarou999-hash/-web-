@@ -182,7 +182,7 @@
       );
     }).join("");
     var discord = CFG.discordUrl
-      ? '<a class="btn btn-gold btn-sm header-discord" href="' + U.esc(CFG.discordUrl) + '" target="_blank" rel="noopener">' + DISCORD_LABEL + "</a>"
+      ? '<a class="btn btn-green btn-sm header-discord" href="' + U.esc(CFG.discordUrl) + '" target="_blank" rel="noopener">' + DISCORD_LABEL + "</a>"
       : "";
     if (CFG.discordUrl) {
       links += '<li class="nav-discord"><a href="' + U.esc(CFG.discordUrl) + '" target="_blank" rel="noopener">' + DISCORD_LABEL + "</a></li>";
